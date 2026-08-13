@@ -11,6 +11,7 @@ Output: ml/data/dataset.pt
 """
 
 import collections
+import bisect
 import os
 import struct
 import sys
@@ -18,8 +19,24 @@ import sys
 import numpy as np
 import torch
 
+from tls_fp import ja3_from_clienthello
+
+# Optional feature groups, enabled via env TFLAB_FEATURES=base,group1,group2
+FEATURE_GROUPS = [g for g in os.environ.get("TFLAB_FEATURES", "").split(",") if g]
+EXCLUDE_PCAPS = set(
+    e for e in os.environ.get("TFLAB_EXCLUDE_PCAPS", "").split(",") if e)
+HANDSHAKE = "handshake" in FEATURE_GROUPS
+HTTPF = "http" in FEATURE_GROUPS
+MULTI = "multiscale" in FEATURE_GROUPS
+SHAPE = "shape" in FEATURE_GROUPS
+JA3F = "ja3" in FEATURE_GROUPS
+
+META_BASE = 16
+META_CIC = 39
+SHAPE_N, HTTP_N, JA3_N, HS_N, MS_N, JA3C_N = 5, 7, 2, 5, 11, 1
+
 LAB = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-OUT_DIR = os.path.join(LAB, "out")
+OUT_DIR = os.path.join(LAB, "data", "captures")
 DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data")
 MAX_LEN = 96
 BF_WINDOW = 10.0  # cross-flow burst window (seconds)
@@ -72,14 +89,14 @@ def parse_pkt(data, linktype):
         if ul < 8 or l4 + ul > len(data):
             return None
         payload = data[l4 + 8:l4 + ul]
-        return src, sport, dst, dport, proto, payload
+        return src, sport, dst, dport, proto, 0, payload
     if len(data) < l4 + 20:
         return None
     doff = (data[l4 + 12] >> 4) * 4
     if doff < 20 or l4 + doff > len(data):
         return None
     payload = data[l4 + doff:]
-    return src, sport, dst, dport, proto, payload
+    return src, sport, dst, dport, proto, data[l4 + 13], payload
 
 
 def read_pcap(path):
@@ -148,6 +165,41 @@ def sni_from_ch(data):
     return None
 
 
+def tls13_from_ch(data):
+    """True if a ClientHello advertises TLS 1.3 (supported_versions ext)."""
+    if len(data) < 5 or data[0] != 1:
+        return 0.0
+    ml = int.from_bytes(data[1:4], "big")
+    b = data[4:4 + ml]
+    if len(b) < 38:
+        return 0.0
+    pos = 2 + 32
+    sl = b[pos]
+    pos += 1 + sl
+    cs = int.from_bytes(b[pos:pos + 2], "big")
+    pos += 2 + cs
+    cl = b[pos]
+    pos += 1 + cl
+    if pos + 2 > len(b):
+        return 0.0
+    ext_total = int.from_bytes(b[pos:pos + 2], "big")
+    pos += 2
+    end = min(pos + ext_total, len(b))
+    while pos + 4 <= end:
+        et = int.from_bytes(b[pos:pos + 2], "big")
+        el = int.from_bytes(b[pos + 2:pos + 4], "big")
+        if pos + 4 + el > end:
+            break
+        d = b[pos + 4:pos + 4 + el]
+        if et == 43 and len(d) >= 2:
+            slen = int.from_bytes(d[0:2], "big")
+            for i in range(2, min(2 + slen, len(d) - 1)):
+                if d[i] == 0x03 and d[i + 1] == 0x04:
+                    return 1.0
+        pos += 4 + el
+    return 0.0
+
+
 def size_bucket(sz):
     return 0 if sz <= 0 else min(31, int(sz).bit_length() - 1)
 
@@ -170,12 +222,13 @@ def extract_flows(path):
     conns = collections.defaultdict(lambda: {
         "c": [], "s": [], "first": None, "last": None, "client": None,
         "server": None,
-        "dport": 0, "proto": 0})
+        "dport": 0, "proto": 0, "flagcnt": collections.Counter(),
+        "synack": 0, "synonly": 0, "rst": 0, "payload_seen": False})
     for ts, data, lt in read_pcap(path):
         pkt = parse_pkt(data, lt)
         if pkt is None:
             continue
-        src, sport, dst, dport, proto, payload = pkt
+        src, sport, dst, dport, proto, flags, payload = pkt
         key = frozenset(((src, sport), (dst, dport), proto))
         c = conns[key]
         c["proto"] = proto
@@ -184,6 +237,19 @@ def extract_flows(path):
             c["client"] = (src, sport)
             c["dport"] = dport
         c["last"] = ts
+        if proto == 6:
+            for name, bit in (("FIN", 0x01), ("SYN", 0x02), ("RST", 0x04),
+                              ("PSH", 0x08), ("ACK", 0x10)):
+                if flags & bit:
+                    c["flagcnt"][name] += 1
+            if flags & 0x12 == 0x12:
+                c["synack"] += 1
+            if flags == 0x02:
+                c["synonly"] += 1
+            if flags & 0x04:
+                c["rst"] += 1
+            if payload:
+                c["payload_seen"] = True
         if (src, sport) == c["client"]:
             c["c"].append((ts, payload))
         else:
@@ -203,26 +269,100 @@ def flow_meta(c):
     s_bytes = sum(len(p) for _, p in c["s"])
     is_tls = 0.0
     sni = None
+    tls13 = 0.0
+    ch_len = 0.0
+    sh_len = 0.0
+    max_rec = 0.0
     for _, p in c["c"][:5]:
+        max_rec = max(max_rec, float(len(p)))
         if len(p) >= 3 and p[0] == 0x16 and p[1] == 0x03:
             is_tls = 1.0
+            if ch_len == 0:
+                ch_len = float(len(p))
             if len(p) >= 5:
                 rec = p[5:]
                 if rec and rec[0] == 1:
                     sni = sni_from_ch(rec)
+                    tls13 = tls13_from_ch(rec)
             break
+    for _, p in c["s"][:5]:
+        max_rec = max(max_rec, float(len(p)))
+        if sh_len == 0 and p:
+            sh_len = float(len(p))
     dur = max(0.0, (c["last"] or 0) - (c["first"] or 0))
     n_ev = float(sum(1 for _, p in c["c"] if p) + sum(1 for _, p in c["s"] if p))
     return [
         is_tls,
         1.0 if sni else 0.0,
+        tls13,
         np.log1p(dur),
         np.log1p(c_bytes), np.log1p(s_bytes),
         np.log1p(n_ev),
         min(1.0, c["dport"] / 65535.0),
         0.0,  # same_port_burst (filled in cross-flow pass)
         0.0,  # ports_sweep (filled in cross-flow pass)
+        np.log1p(ch_len),
+        np.log1p(sh_len),
+        np.log1p(c_bytes) - np.log1p(s_bytes),
+        np.log1p(max_rec),
+        1.0 if (c_bytes > 0 or s_bytes > 0) else 0.0,
+        0.0,  # distinct_dsts_recent (filled in cross-flow pass)
     ]
+
+
+def cic_features(c):
+    """CICFlowMeter-style per-flow aggregate statistics (39 dims)."""
+    def stats(vals):
+        if not vals:
+            return [0.0] * 4
+        a = np.asarray(vals, dtype=float)
+        return [float(a.min()), float(a.max()), float(a.mean()),
+                float(a.std()) if len(a) > 1 else 0.0]
+
+    c_ts = [t for t, p in c["c"]]
+    s_ts = [t for t, p in c["s"]]
+    c_len = [len(p) for t, p in c["c"]]
+    s_len = [len(p) for t, p in c["s"]]
+    dur = max(0.0, (c["last"] or 0) - (c["first"] or 0))
+    f_iat = [b - a for a, b in zip(c_ts, c_ts[1:]) if b > a]
+    b_iat = [b - a for a, b in zip(s_ts, s_ts[1:]) if b > a]
+    all_ts = sorted(c_ts + s_ts)
+    flow_iat = [b - a for a, b in zip(all_ts, all_ts[1:]) if b > a]
+    feats = [dur, len(c_len), len(s_len), sum(c_len), sum(s_len)]
+    feats += stats(c_len) + stats(s_len) + stats(f_iat) + stats(b_iat)
+    feats += stats(flow_iat)
+    fc = c.get("flagcnt") or collections.Counter()
+    feats += [float(fc[n]) for n in ("FIN", "SYN", "RST", "PSH", "ACK")]
+    down, up = sum(s_len), sum(c_len)
+    feats.append(down / up if up > 0 else 0.0)
+    active, idle = [], []
+    prev = None
+    for t in all_ts:
+        if prev is not None:
+            g = t - prev
+            (idle if g > 1.0 else active).append(g)
+        prev = t
+    feats += stats(active) + stats(idle)
+    return feats
+
+
+def all_meta(c):
+    """Fused flow-level vector: behavior features + CIC aggregates + optional
+    extra feature groups (cross-flow slots are filled later)."""
+    feats = flow_meta(c) + [np.log1p(v) for v in cic_features(c)]
+    if SHAPE:
+        feats += shape_features(c)
+    if HTTPF:
+        feats += http_features(c)
+    if JA3F:
+        feats += ja3_features(c)
+    if HANDSHAKE:
+        feats += [0.0] * HS_N
+    if MULTI:
+        feats += [0.0] * MS_N
+    if JA3F:
+        feats += [0.0] * JA3C_N
+    return feats
 
 
 def events_of(c):
@@ -241,58 +381,274 @@ def events_of(c):
     return out
 
 
+def _first_client_hello(c):
+    """Return the raw TLS record payload of the first ClientHello (or None)."""
+    for _, p in c["c"][:5]:
+        if len(p) >= 6 and p[0] == 0x16 and p[1] == 0x03 and p[5] == 1:
+            return p
+    return None
+
+
+def _flow_ja3(c):
+    p = _first_client_hello(c)
+    if p is None:
+        return None
+    return ja3_from_clienthello(p[5:])
+
+
+def ja3_features(c):
+    """[has_ja3, ja3_bucket] — bucketed so the model cannot memorize exact JA3."""
+    j = _flow_ja3(c)
+    if not j:
+        return [0.0, 0.0]
+    return [1.0, 1.0 + (abs(hash(j)) % 127)]
+
+
+def shape_features(c):
+    """Timing / size-shape stats: [iat_cv, log1p(iat_p50), log1p(iat_p90),
+    size_cv, size_entropy]."""
+    evs = events_of(c)
+    iats = [dt for _, _, dt in evs if dt > 0]
+    sizes = [sz for _, sz, _ in evs if sz > 0]
+
+    def cv(vals):
+        if len(vals) < 2:
+            return 0.0
+        a = np.asarray(vals, dtype=float)
+        m = a.mean()
+        return float(a.std() / m) if m > 0 else 0.0
+
+    iat_p50 = float(np.percentile(iats, 50)) if iats else 0.0
+    iat_p90 = float(np.percentile(iats, 90)) if iats else 0.0
+    ent = 0.0
+    if sizes:
+        cnt = collections.Counter(size_bucket(s) for s in sizes)
+        tot = float(sum(cnt.values()))
+        ent = -sum((v / tot) * np.log(v / tot) for v in cnt.values())
+    return [cv(iats), np.log1p(iat_p50), np.log1p(iat_p90), cv(sizes), ent]
+
+
+HTTP_METHODS = (b"GET", b"POST", b"PUT", b"HEAD", b"OPTIONS", b"PATCH", b"DELETE")
+
+
+def _http_request_info(c):
+    for _, p in c["c"]:
+        if not p:
+            continue
+        if not any(p.startswith(m + b" ") for m in HTTP_METHODS):
+            continue
+        first_line, _, rest = p.partition(b"\r\n")
+        method = first_line.split(b" ", 1)[0].decode("latin1", "replace").upper()
+        req_len = float(len(first_line))
+        headers = []
+        conn = None
+        for h in rest.split(b"\r\n")[:50]:
+            if not h:
+                break
+            headers.append(h)
+            low = h.lower()
+            if low.startswith(b"connection:"):
+                conn = h.split(b":", 1)[1].strip().lower()
+        keep = 1.0 if (conn == b"keep-alive"
+                       or (conn is None and b"HTTP/1.1" in first_line)) else 0.0
+        return method, req_len, float(len(headers)), keep
+    return None, 0.0, 0.0, 0.0
+
+
+def _http_resp_code(c):
+    for _, p in c["s"]:
+        if p and p.startswith(b"HTTP/1.") and len(p) >= 12:
+            try:
+                return float(int(p[9:12])) / 1000.0
+            except ValueError:
+                return 0.0
+    return 0.0
+
+
+def http_features(c):
+    """Shallow non-TLS HTTP features: [is_http, method_get, method_post,
+    log1p(req_line_len), log1p(n_headers), keep_alive, resp_code_class]."""
+    if _first_client_hello(c) is not None:
+        return [0.0] * HTTP_N
+    method, req_len, n_headers, keep = _http_request_info(c)
+    if method is None:
+        return [0.0] * HTTP_N
+    return [1.0, float(method == "GET"), float(method == "POST"),
+            np.log1p(req_len), np.log1p(n_headers), keep, _http_resp_code(c)]
+
+
+def extra_layout():
+    """Map feature-group names to their starting index in the fused meta
+    vector, and return the total meta dimension."""
+    idx = META_BASE + META_CIC
+    off = {}
+    if SHAPE:
+        off["shape"] = idx
+        idx += SHAPE_N
+    if HTTPF:
+        off["http"] = idx
+        idx += HTTP_N
+    if JA3F:
+        off["ja3"] = idx
+        idx += JA3_N
+    if HANDSHAKE:
+        off["handshake"] = idx
+        idx += HS_N
+    if MULTI:
+        off["multiscale"] = idx
+        idx += MS_N
+    if JA3F:
+        off["ja3cross"] = idx
+        idx += JA3C_N
+    return off, idx
+
+
 def cross_flow_meta(flows, metas):
-    """Fill meta[7] (same dst-port burst count) and meta[8] (distinct-ports
-    sweep) within a rolling window around each flow."""
+    """Fill base burst/sweep/distinct-dsts (8/9/15) plus optional feature-group
+    cross-flow slots (handshake ratios, multi-scale windows, JA3 stability).
+    Flows are grouped by client IP and time-sorted, so each flow only scans its
+    own source's 60s neighbourhood instead of the whole flow list."""
+    off, _ = extra_layout()
+    by_src = {}
     for i, f in enumerate(flows):
-        t = f["first"]
-        dport = f["dport"]
         src = (f.get("client") or (None, 0))[0]
-        dst = (f.get("server") or (None, 0))[0]
-        same_port = 0
-        sweep = set()
-        for j in range(len(flows)):
-            if j == i:
-                continue
-            g = flows[j]
-            if abs(g["first"] - t) > BF_WINDOW:
-                continue
-            gsrc = (g.get("client") or (None, 0))[0]
-            gdst = (g.get("server") or (None, 0))[0]
-            if gsrc != src or gdst != dst:
-                continue
-            if g["dport"] == dport:
-                same_port += 1
-            sweep.add(g["dport"])
-        metas[i][7] = np.log1p(same_port)
-        metas[i][8] = min(1.0, len(sweep) / 128.0)
+        by_src.setdefault(src, []).append(i)
+    for src, idxs in by_src.items():
+        idxs.sort(key=lambda fi: flows[fi]["first"])
+        ts = [flows[fi]["first"] for fi in idxs]
+        for k, i in enumerate(idxs):
+            f = flows[i]
+            t = f["first"]
+            dport = f["dport"]
+            dst = (f.get("server") or (None, 0))[0]
+            lo = bisect.bisect_left(ts, t - 60.0)
+            hi = bisect.bisect_right(ts, t + 60.0)
+            same_port = 0
+            sweep = set()
+            dsts = set()
+            src_n = src_est = src_synonly = src_rst = 0
+            src_dports = set()
+            src_ja3 = {}
+            dp_n = dp_est = 0
+            b = {1: 0, 5: 0, 10: 0, 60: 0}
+            sw = {1: set(), 5: set(), 10: set(), 60: set()}
+            dsts_w = {1: set(), 5: set(), 10: set(), 60: set()}
+            for m in range(lo, hi):
+                if m == k:
+                    continue
+                g = flows[idxs[m]]
+                gsrc = (g.get("client") or (None, 0))[0]
+                gdst = (g.get("server") or (None, 0))[0]
+                dtg = abs(g["first"] - t)
+                if dtg > 60.0:
+                    continue
+                for w in (1, 5, 10, 60):
+                    if dtg <= w:
+                        dsts_w[w].add(gdst)
+                if gdst == dst:
+                    for w in (1, 5, 10, 60):
+                        if dtg <= w:
+                            sw[w].add(g["dport"])
+                            if g["dport"] == dport:
+                                b[w] += 1
+                if dtg <= BF_WINDOW:
+                    dsts.add(gdst)
+                    est = bool(g["payload_seen"]) or g["synack"] > 0
+                    src_n += 1
+                    if est:
+                        src_est += 1
+                    if g["synonly"] > 0:
+                        src_synonly += 1
+                    if g["rst"] > 0 and not est:
+                        src_rst += 1
+                    src_dports.add(g["dport"])
+                    if g["dport"] == dport:
+                        dp_n += 1
+                        if est:
+                            dp_est += 1
+                    if JA3F:
+                        jj = _flow_ja3(g)
+                        if jj:
+                            src_ja3[jj] = src_ja3.get(jj, 0) + 1
+            metas[i][8] = np.log1p(b[10])
+            metas[i][9] = min(1.0, len(sw[10]) / 128.0)
+            metas[i][15] = min(1.0, len(dsts_w[10]) / 64.0)
+            if HANDSHAKE:
+                s = off["handshake"]
+                metas[i][s] = src_est / src_n if src_n else 0.0
+                metas[i][s + 1] = src_synonly / src_n if src_n else 0.0
+                metas[i][s + 2] = src_rst / src_n if src_n else 0.0
+                metas[i][s + 3] = np.log1p(src_n)
+                metas[i][s + 4] = dp_est / dp_n if dp_n else 0.0
+            if MULTI:
+                s = off["multiscale"]
+                kk = 0
+                for w in (1, 5, 60):
+                    metas[i][s + kk] = np.log1p(b[w])
+                    metas[i][s + kk + 1] = min(1.0, len(sw[w]) / 128.0)
+                    metas[i][s + kk + 2] = min(1.0, len(dsts_w[w]) / 64.0)
+                    kk += 3
+                metas[i][s + 9] = np.log1p(len(src_dports))
+                metas[i][s + 10] = src_rst / src_n if src_n else 0.0
+            if JA3F:
+                s = off["ja3cross"]
+                my = _flow_ja3(f)
+                stab = 0.0
+                if my and src_ja3:
+                    tot = sum(src_ja3.values())
+                    stab = src_ja3.get(my, 0) / tot if tot else 0.0
+                metas[i][s] = stab
 
 
 def main():
     malicious = {}
     skip = {"cap_normal.pcap", "cap_real_negative.pcap"}
-    for f in sorted(os.listdir(OUT_DIR)):
-        if not f.startswith("cap_") or not f.endswith(".pcap") or "bench" in f:
-            continue
-        if f in skip:
-            continue
-        path = os.path.join(OUT_DIR, f)
+
+    def add_mal(path, tool=None):
+        base = os.path.basename(path)
+        if base in skip or "bench" in base or base in EXCLUDE_PCAPS:
+            return
         if os.path.getsize(path) == 0:
-            continue
-        malicious[f[4:-5]] = path
+            return
+        if tool is None:
+            if not base.startswith("cap_") or not base.endswith(".pcap"):
+                return
+            tool = base[4:-5]
+        elif not base.endswith(".pcap"):
+            return
+        malicious.setdefault(tool, []).append(path)
+
+    for f in sorted(os.listdir(OUT_DIR)):
+        add_mal(os.path.join(OUT_DIR, f))
+    # parameterized reruns: data/captures/rounds/<tool>/cap_r*.pcap
+    rounds_dir = os.path.join(OUT_DIR, "rounds")
+    if os.path.isdir(rounds_dir):
+        for tool in sorted(os.listdir(rounds_dir)):
+            td = os.path.join(rounds_dir, tool)
+            if not os.path.isdir(td):
+                continue
+            for f in sorted(os.listdir(td)):
+                add_mal(os.path.join(td, f), tool=tool)
 
     normal = [os.path.join(OUT_DIR, f) for f in sorted(os.listdir(OUT_DIR))
-              if f.startswith("normal_") and f.endswith(".pcap")]
+              if f.startswith("normal_") and f.endswith(".pcap")
+              and f not in EXCLUDE_PCAPS]
     normal.append(os.path.join(OUT_DIR, "cap_normal.pcap"))
     # real traffic captured on this machine (authorized local baseline)
     real = os.path.join(OUT_DIR, "real_traffic.pcap")
-    if os.path.exists(real):
+    if os.path.exists(real) and os.path.basename(real) not in EXCLUDE_PCAPS:
         normal.append(real)
+    for extra in ("real_traffic2.pcap", "real_traffic3.pcap", "real_traffic4.pcap",
+                  "real_traffic5.pcap", "real_traffic_sr.pcap"):
+        p = os.path.join(OUT_DIR, extra)
+        if os.path.exists(p) and extra not in EXCLUDE_PCAPS:
+            normal.append(p)
 
     flow_recs = []  # (path, flow, tool, origin)
-    for tool, path in sorted(malicious.items()):
-        for c in extract_flows(path):
-            flow_recs.append((path, c, tool, tool))
+    for tool, paths in sorted(malicious.items()):
+        for path in paths:
+            for c in extract_flows(path):
+                flow_recs.append((path, c, tool, os.path.basename(path)))
 
     bf_sources = {
         "bf_ssh": "bruteforce_ssh",
@@ -311,7 +667,7 @@ def main():
             flow_recs.append((path, c, "", os.path.basename(path)))
 
     flows = [r[1] for r in flow_recs]
-    metas = [flow_meta(c) for c in flows]
+    metas = [all_meta(c) for c in flows]
     cross_flow_meta(flows, metas)
 
     X_dir, X_sz, X_dt, X_mask, X_meta = [], [], [], [], []
@@ -340,6 +696,37 @@ def main():
         arr_mask[i, :ln] = X_mask[i]
     arr_meta = np.asarray(X_meta, dtype=np.float32)
     yy = np.asarray(y, dtype=np.int64)
+    cic_n = ["duration", "fwd_pkts", "bwd_pkts", "fwd_bytes", "bwd_bytes",
+             "fwd_len_min", "fwd_len_max", "fwd_len_mean", "fwd_len_std",
+             "bwd_len_min", "bwd_len_max", "bwd_len_mean", "bwd_len_std",
+             "fwd_iat_min", "fwd_iat_max", "fwd_iat_mean", "fwd_iat_std",
+             "bwd_iat_min", "bwd_iat_max", "bwd_iat_mean", "bwd_iat_std",
+             "flow_iat_min", "flow_iat_max", "flow_iat_mean", "flow_iat_std",
+             "fin_cnt", "syn_cnt", "rst_cnt", "psh_cnt", "ack_cnt",
+             "down_up_ratio", "active_min", "active_max", "active_mean",
+             "active_std", "idle_min", "idle_max", "idle_mean", "idle_std"]
+    meta_n = (["is_tls", "has_sni", "tls13", "duration", "tot_c", "tot_s",
+               "n_events", "dport", "same_port_burst", "ports_sweep",
+               "ch_len", "sh_len", "req_resp_ratio", "max_rec", "estab",
+               "distinct_dsts"]
+              + ["cic_" + n for n in cic_n])
+    if SHAPE:
+        meta_n += ["iat_cv", "iat_p50", "iat_p90", "size_cv", "size_entropy"]
+    if HTTPF:
+        meta_n += ["is_http", "method_get", "method_post", "req_line_len",
+                   "n_headers", "keep_alive", "resp_code_class"]
+    if JA3F:
+        meta_n += ["has_ja3", "ja3_bucket"]
+    if HANDSHAKE:
+        meta_n += ["est_ratio_src", "synonly_ratio_src", "rst_ratio_src",
+                   "src_conns", "est_ratio_dport"]
+    if MULTI:
+        meta_n += ["burst_1s", "sweep_1s", "dsts_1s",
+                   "burst_5s", "sweep_5s", "dsts_5s",
+                   "burst_60s", "sweep_60s", "dsts_60s",
+                   "src_uniq_dports", "src_failed_ratio"]
+    if JA3F:
+        meta_n += ["ja3_stability"]
 
     os.makedirs(DATA_DIR, exist_ok=True)
     torch.save({
@@ -351,8 +738,7 @@ def main():
         "y": torch.from_numpy(yy),
         "tools": tools,
         "origins": origins,
-        "meta_names": ["is_tls", "has_sni", "duration", "tot_c", "tot_s",
-                       "n_events", "dport", "same_port_burst", "ports_sweep"],
+        "meta_names": meta_n,
         "max_len": MAX_LEN,
     }, os.path.join(DATA_DIR, "dataset.pt"))
     print(f"dataset: {n} flows (malicious={int(yy.sum())}, normal={n - int(yy.sum())}), "

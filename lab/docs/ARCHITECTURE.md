@@ -64,7 +64,7 @@ lab/
 ├── test/
 │   ├── test_runner.py                # 跑场景 + 校验告警 + 生成报告
 │   └── golden/                       # 金标准 pcap（离线回归）
-└── out/                              # 运行产物（gitignored）
+└── data/                              # 运行产物（gitignored）
 ```
 
 ## 场景模块契约
@@ -85,8 +85,8 @@ harness/run_scenario.sh <scenario>
   2. 并行启动：tcpdump 抓包 + Go 探针（-scenario=<tool> 加载对应规则）
   3. 执行 scenarios/<tool>/run.sh（部署工具 + 驱动流量）
   4. 等待场景结束 → 停抓包/停探针
-  5. 产物：cap_<tool>.pcap、probe_<tool>.jsonl、<tool>.log → out/
-test/test_runner.py out/... expected.json
+  5. 产物：cap_<tool>.pcap、probe_<tool>.jsonl、<tool>.log → data/
+test/test_runner.py data/... expected.json
   6. 校验探针告警命中预期（正样本 ≥ min_count，负样本 = 0）
   7. 输出 PASS/FAIL 报告
 ```

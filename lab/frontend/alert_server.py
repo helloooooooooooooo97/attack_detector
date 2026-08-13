@@ -63,7 +63,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--source", default=os.path.join(LAB, "out", "probe_*.jsonl"))
+    ap.add_argument("--source", default=os.path.join(LAB, "data", "alerts", "probe_*.jsonl"))
     ap.add_argument("--port", type=int, default=4174)
     ap.add_argument("--interval", type=float, default=3.0)
     args = ap.parse_args()

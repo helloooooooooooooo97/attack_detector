@@ -15,9 +15,9 @@ linux-arm64:
 
 # Validate detection logic against the lab captures
 replay-test: linux-amd64
-	./$(BIN)-linux-amd64 -r ../out/cap_close.pcap -json -ja3=false | grep -c behinder.mem_shell_flow || true
-	./$(BIN)-linux-amd64 -r ../out/cap_keepalive.pcap -json -ja3=false | grep -c behinder.file_webshell_flow || true
-	./$(BIN)-linux-amd64 -r ../out/cap_normal.pcap -json -ja3=false | grep -c DETECTED || true
+	./$(BIN)-linux-amd64 -r ../data/captures/cap_close.pcap -json -ja3=false | grep -c behinder.mem_shell_flow || true
+	./$(BIN)-linux-amd64 -r ../data/captures/cap_keepalive.pcap -json -ja3=false | grep -c behinder.file_webshell_flow || true
+	./$(BIN)-linux-amd64 -r ../data/captures/cap_normal.pcap -json -ja3=false | grep -c DETECTED || true
 
 clean:
 	rm -f $(BIN)-darwin $(BIN)-linux-amd64 $(BIN)-linux-arm64

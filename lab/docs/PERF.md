@@ -36,14 +36,14 @@ python3 framework/bench/gen_pcap.py 500000
 # 3. 逐档压测（TAP 设备注入；单趟模式）
 docker run --rm --privileged --network none \
   -v "$PWD":/lab/src:rw tflab-bench \
-  bash /lab/src/framework/bench/run_bench.sh 200000 20 /lab/src/out/bench.pcap
+  bash /lab/src/framework/bench/run_bench.sh 200000 20 /lab/src/data/captures/bench.pcap
 # 4. 榨干注入器极限
 docker run --rm --privileged --network none \
   -v "$PWD":/lab/src:rw tflab-bench \
-  bash /lab/src/framework/bench/run_bench.sh topspeed 20 /lab/src/out/bench.pcap
+  bash /lab/src/framework/bench/run_bench.sh topspeed 20 /lab/src/data/captures/bench.pcap
 ```
 
-输出在 `out/bench_*.log`：`RESULT` 行给 sent/frames/丢包率/告警数，
+输出在 `data/bench_*.log`：`RESULT` 行给 sent/frames/丢包率/告警数，
 `bench_cpu_*.log` 每秒采样 CPU+RSS。
 
 ## 边界

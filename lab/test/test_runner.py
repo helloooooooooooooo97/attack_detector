@@ -2,10 +2,10 @@
 """Scenario test runner: validate probe alerts against expected.json.
 
 Usage:
-  python3 test/test_runner.py                    # all scenarios in out/
+  python3 test/test_runner.py                    # all scenarios in data/alerts/
   python3 test/test_runner.py behinder ligolo    # specific scenarios
 
-For each scenario it checks out/probe_<name>.jsonl against
+For each scenario it checks data/alerts/probe_<name>.jsonl against
 scenarios/<name>/expected.json (or scenario.json "expected").
 """
 
@@ -26,7 +26,7 @@ def check_scenario(name):
     scenario = load(os.path.join(LAB, "scenarios", name, "scenario.json"))
     expected = scenario.get("expected", [])
     negative = scenario.get("negative", False)
-    probe_file = os.path.join(LAB, "out", f"probe_{name}.jsonl")
+    probe_file = os.path.join(LAB, "data", "alerts", f"probe_{name}.jsonl")
 
     if not os.path.exists(probe_file):
         return name, "FAIL", f"missing {probe_file}"

@@ -74,7 +74,7 @@ def collect(patterns):
 
 
 def main():
-    pattern = sys.argv[1] if len(sys.argv) > 1 else os.path.join(LAB, "out", "probe_*.jsonl")
+    pattern = sys.argv[1] if len(sys.argv) > 1 else os.path.join(LAB, "data", "alerts", "probe_*.jsonl")
     out = sys.argv[2] if len(sys.argv) > 2 else os.path.join(WEB_DATA, "alerts.json")
     emap = build_event_map()
     alerts = collect([pattern])

@@ -242,7 +242,12 @@ def main():
     ap.add_argument("--profile", required=True)
     ap.add_argument("--host", default="127.0.0.1")
     ap.add_argument("--cycles", type=int, default=0, help="0 = run until duration")
+    ap.add_argument("--seed", type=int, default=None,
+                    help="random seed for payload sizes / interval jitter "
+                         "(parameterized reruns; default = unseeded)")
     args = ap.parse_args()
+    if args.seed is not None:
+        random.seed(args.seed)
 
     profile = json.load(open(args.profile, encoding="utf-8"))
     duration = profile.get("duration", 60)

@@ -309,6 +309,55 @@ def gen_dns_storm(w, i):
         w.pkt(eth(ipv4("10.9.9.53", src, 17, udp(53, sport, r))), 0.01)
 
 
+def gen_sync_burst(w, i):
+    """A background app repeatedly opening short TLS connections to ONE
+    endpoint (mobile/desktop sync style) -- beacon-like but benign."""
+    src = "10.9.9.60"
+    dst = "10.9.9.70"
+    sni = b"sync.app.example.com"
+    for k in range(18):
+        sport = 26000 + i * 30 + k
+        seq = i * 6000 + k * 40
+        tls_pair(w, src, dst, sport, 29388, seq, sni,
+                 [random.randint(200, 600), random.randint(300, 1200)])
+        w.t += random.uniform(0.3, 1.5)
+
+
+def gen_failed_conn(w, i):
+    """Normal failed/refused connections: SYN-only or SYN then RST
+    (browser retries, app probes) -- zero-payload, must stay normal."""
+    src = "10.9.9.61"
+    for k in range(12):
+        dst = f"10.9.9.{80 + k % 10}"
+        sport = 27000 + i * 20 + k
+        seq = i * 3000 + k * 10
+        w.pkt(eth(ipv4(src, dst, 6, tcp(sport, 443, seq, 0, 0x02))), random.uniform(0.2, 2.0))
+        w.pkt(eth(ipv4(dst, src, 6, tcp(443, sport, 1, seq + 1, 0x14))), 0.01)  # RST+ACK
+
+
+def gen_short_http(w, i):
+    """Tiny non-TLS requests (health checks / API pings) to :80/:8080."""
+    src = "10.9.9.62"
+    for k in range(10):
+        dst = f"10.9.9.{90 + k % 8}"
+        sport = 28000 + i * 15 + k
+        seq = i * 2500 + k * 20
+        req = b"GET /ping HTTP/1.1\r\nHost: svc\r\n\r\n"
+        resp = b"HTTP/1.1 200 OK\r\nContent-Length: 4\r\n\r\npong"
+        http_pair(w, src, dst, sport, 8080, seq, req, resp)
+        w.t += random.uniform(1.0, 5.0)
+
+
+def gen_udp_app(w, i):
+    """Small UDP packets to high ports (app discovery / keepalive)."""
+    src = "10.9.9.63"
+    for k in range(10):
+        dst = f"10.9.9.{100 + k % 6}"
+        payload = bytes(random.getrandbits(8) for _ in range(random.randint(24, 120)))
+        w.pkt(eth(ipv4(src, dst, 17, udp(29000 + i * 20 + k, 3722, payload))), random.uniform(0.5, 4.0))
+        w.pkt(eth(ipv4(dst, src, 17, udp(3722, 29000 + i * 20 + k, bytes(24)))), 0.02)
+
+
 PATTERNS = {
     "browse": gen_browse, "api": gen_api, "stream": gen_stream,
     "download": gen_download, "chat": gen_chat, "iot": gen_iot,
@@ -321,6 +370,10 @@ PROBE_LIKE = {
     "crawler": (gen_crawler, 20),
     "browser_burst": (gen_browser_burst, 20),
     "dns_storm": (gen_dns_storm, 20),
+    "sync_burst": (gen_sync_burst, 20),
+    "failed_conn": (gen_failed_conn, 20),
+    "short_http": (gen_short_http, 20),
+    "udp_app": (gen_udp_app, 20),
 }
 
 

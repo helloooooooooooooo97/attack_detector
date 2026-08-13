@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 """Run the trained FlowTransformer over arbitrary pcaps (per-flow scores).
 
-Usage: python3 ml/predict_pcap.py <pcap...>
+Usage: python3 ml/predict_pcap.py [--model PATH] [--variant VARIANT]
+                                  [--h_cols N] <pcap...>
 """
 
+import argparse
 import os
 import sys
 
@@ -16,7 +18,7 @@ from train_transformer import FlowTransformer, DEVICE
 
 
 def flows_to_tensors(flows):
-    metas = [B.flow_meta(c) for c in flows]
+    metas = [B.all_meta(c) for c in flows]
     B.cross_flow_meta(flows, metas)
     X_dir, X_sz, X_dt, X_mask, X_meta = [], [], [], [], []
     for c, meta in zip(flows, metas):
@@ -52,17 +54,36 @@ def flows_to_tensors(flows):
 
 
 def main():
-    model_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                              "reports", "flow_transformer.pt")
-    model = FlowTransformer()
-    model.load_state_dict(torch.load(model_path, weights_only=True, map_location="cpu"))
-    model.to(DEVICE).eval()
-    for path in sys.argv[1:]:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--model", default=os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), "reports",
+        "flow_transformer.pt"), help="model checkpoint path")
+    ap.add_argument("--variant", default="flat",
+                    choices=["flat", "grouped", "multicol", "grouped_multicol"])
+    ap.add_argument("--h_cols", type=int, default=4)
+    ap.add_argument("--group_plan", default="coarse",
+                    choices=["coarse", "mid", "fine"])
+    ap.add_argument("--dcn", action="store_true",
+                    help="load a DCN-V2 (cross + deep) meta block model")
+    ap.add_argument("--dual", action="store_true",
+                    help="load a dual-path model (Linear direct + DCN parallel)")
+    ap.add_argument("pcaps", nargs="+")
+    args = ap.parse_args()
+    model = None
+    for path in args.pcaps:
         flows = B.extract_flows(path)
         tens = flows_to_tensors(flows)
         if tens is None:
             print(f"{path}: 0 flows")
             continue
+        if model is None:
+            model = FlowTransformer(variant=args.variant, h_cols=args.h_cols,
+                                    group_plan=args.group_plan, dcn=args.dcn,
+                                    dual=args.dual,
+                                    meta_dim=int(tens["X_meta"].shape[1]))
+            model.load_state_dict(torch.load(
+                model_path, weights_only=True, map_location="cpu"))
+            model.to(DEVICE).eval()
         with torch.no_grad():
             logit = model(**{k: v.to(DEVICE) for k, v in tens.items()}).cpu().numpy()
         p = 1 / (1 + np.exp(-logit))

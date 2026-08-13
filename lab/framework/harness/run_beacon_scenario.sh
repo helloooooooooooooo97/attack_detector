@@ -6,14 +6,14 @@
 # inside the lab container. Used by scenarios/<tool>/run.sh.
 set +e
 TOOL="${1:?usage: run_beacon_scenario.sh <tool>}"
-OUT="${OUT:-/lab/src/out}"
+OUT="${OUT:-/lab/src/data}"
 PROF="/lab/src/framework/drivers/beacon/profiles/$TOOL.json"
 ASSETS="/lab/src/scenarios/$TOOL/assets"
-mkdir -p "$OUT"
+mkdir -p "$OUT/logs"
 
 DURATION=$(python3 -c "import json;print(json.load(open('$PROF')).get('duration',60))")
 
-python3 - "$PROF" > "$OUT/.${TOOL}_endpoints" <<'PY'
+python3 - "$PROF" > "$OUT/logs/.${TOOL}_endpoints" <<'PY'
 import json, sys
 d = json.load(open(sys.argv[1]))
 eps = []
@@ -47,11 +47,15 @@ while read -r transport port; do
       grep -q "$transport" /etc/hosts || echo "127.0.0.1 $transport" >> /etc/hosts
       ;;
   esac
-done < <(tail -n +1 "$OUT/.${TOOL}_endpoints")
+done < <(tail -n +1 "$OUT/logs/.${TOOL}_endpoints")
 sleep 1
 
+SEED_ARGS=""
+if [ -n "${BEACON_SEED:-}" ]; then
+  SEED_ARGS="--seed $BEACON_SEED"
+fi
 timeout "$((DURATION + 10))" python3 /lab/src/framework/drivers/beacon/beacon_agent.py \
-  --profile "$PROF" > "$OUT/${TOOL}_drv.log" 2>&1
+  --profile "$PROF" $SEED_ARGS > "$OUT/${TOOL}_drv.log" 2>&1
 RC=$?
 kill $SRVS 2>/dev/null
 echo "$TOOL scenario rc=$RC" >> "$OUT/$TOOL.log"

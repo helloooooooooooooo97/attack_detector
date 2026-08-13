@@ -1,0 +1,307 @@
+{
+  "dataset": {
+    "n": 12228,
+    "malicious": 5353,
+    "normal": 6875
+  },
+  "config": {
+    "variant": "flat",
+    "h_cols": 4,
+    "d_model": 64,
+    "layers": 2,
+    "seed": 42
+  },
+  "scenario_split": {
+    "recall": 0.9682421072295909,
+    "precision": 0.9942451563399194,
+    "f1": 0.9810713609691464,
+    "specificity": 0.9941860465116279,
+    "auroc": 0.9826882656490188,
+    "n": 10513,
+    "tp": 5183,
+    "fp": 30,
+    "fn": 170,
+    "tn": 5130,
+    "k": 5,
+    "fixed_0.5": {
+      "recall": 0.41920418456940034,
+      "precision": 0.991166077738516,
+      "f1": 0.5892083497439937,
+      "specificity": 0.9961240310077519,
+      "tp": 2244,
+      "fp": 20,
+      "fn": 3109,
+      "tn": 5140
+    },
+    "per_tool": {
+      "close": {
+        "n": 10,
+        "tp": 7
+      },
+      "donot": {
+        "n": 13,
+        "tp": 12
+      },
+      "frp": {
+        "n": 1,
+        "tp": 0
+      },
+      "hemao": {
+        "n": 5,
+        "tp": 5
+      },
+      "merlin": {
+        "n": 5,
+        "tp": 1
+      },
+      "metasploit": {
+        "n": 118,
+        "tp": 11
+      },
+      "natpass": {
+        "n": 1,
+        "tp": 0
+      },
+      "ngrok": {
+        "n": 6,
+        "tp": 6
+      },
+      "octopus": {
+        "n": 6,
+        "tp": 6
+      },
+      "rustystealer": {
+        "n": 12,
+        "tp": 12
+      },
+      "simayrat": {
+        "n": 4,
+        "tp": 4
+      },
+      "sish2": {
+        "n": 1,
+        "tp": 0
+      },
+      "sparkrat": {
+        "n": 6,
+        "tp": 6
+      },
+      "yinhu": {
+        "n": 1,
+        "tp": 0
+      },
+      "antsword": {
+        "n": 5,
+        "tp": 5
+      },
+      "bruteforce": {
+        "n": 80,
+        "tp": 80
+      },
+      "chopper": {
+        "n": 10,
+        "tp": 10
+      },
+      "cobaltstrike": {
+        "n": 15,
+        "tp": 15
+      },
+      "covenant": {
+        "n": 4,
+        "tp": 2
+      },
+      "evilox": {
+        "n": 5,
+        "tp": 5
+      },
+      "godzilla": {
+        "n": 3,
+        "tp": 1
+      },
+      "lazarus": {
+        "n": 4,
+        "tp": 4
+      },
+      "sidewinder": {
+        "n": 13,
+        "tp": 12
+      },
+      "sish": {
+        "n": 1,
+        "tp": 0
+      },
+      "suo5": {
+        "n": 11,
+        "tp": 7
+      },
+      "tristealer": {
+        "n": 15,
+        "tp": 15
+      },
+      "vshell": {
+        "n": 1,
+        "tp": 0
+      },
+      "bruteforce_ssh": {
+        "n": 900,
+        "tp": 900
+      },
+      "aptc60": {
+        "n": 5,
+        "tp": 5
+      },
+      "aptc68": {
+        "n": 5,
+        "tp": 5
+      },
+      "behinder": {
+        "n": 9,
+        "tp": 7
+      },
+      "ksrat": {
+        "n": 5,
+        "tp": 5
+      },
+      "ktlvdoor": {
+        "n": 1,
+        "tp": 0
+      },
+      "manlinghua": {
+        "n": 13,
+        "tp": 12
+      },
+      "nimplant": {
+        "n": 5,
+        "tp": 5
+      },
+      "platypus": {
+        "n": 6,
+        "tp": 2
+      },
+      "rakshasa": {
+        "n": 1,
+        "tp": 0
+      },
+      "shadowtls": {
+        "n": 8,
+        "tp": 0
+      },
+      "sliver": {
+        "n": 1,
+        "tp": 0
+      },
+      "stowaway": {
+        "n": 1,
+        "tp": 0
+      },
+      "transparenttribe": {
+        "n": 7,
+        "tp": 7
+      },
+      "abptts": {
+        "n": 27,
+        "tp": 25
+      },
+      "apt29": {
+        "n": 5,
+        "tp": 5
+      },
+      "badnews": {
+        "n": 5,
+        "tp": 5
+      },
+      "fatalrat": {
+        "n": 5,
+        "tp": 5
+      },
+      "keepalive": {
+        "n": 1,
+        "tp": 0
+      },
+      "oceanlotus": {
+        "n": 4,
+        "tp": 4
+      },
+      "oilrig": {
+        "n": 5,
+        "tp": 5
+      },
+      "perfspyrat": {
+        "n": 6,
+        "tp": 6
+      },
+      "st4": {
+        "n": 1,
+        "tp": 0
+      },
+      "wmrat": {
+        "n": 6,
+        "tp": 6
+      },
+      "xiebro": {
+        "n": 1,
+        "tp": 0
+      },
+      "bruteforce_http": {
+        "n": 900,
+        "tp": 900
+      },
+      "bruteforce_scan": {
+        "n": 3000,
+        "tp": 3000
+      },
+      "adaptix": {
+        "n": 9,
+        "tp": 9
+      },
+      "bruteratel": {
+        "n": 4,
+        "tp": 4
+      },
+      "deimos": {
+        "n": 11,
+        "tp": 0
+      },
+      "ghostwriter": {
+        "n": 4,
+        "tp": 4
+      },
+      "gost": {
+        "n": 7,
+        "tp": 7
+      },
+      "ligolo": {
+        "n": 3,
+        "tp": 2
+      },
+      "loki": {
+        "n": 5,
+        "tp": 5
+      },
+      "mythic": {
+        "n": 1,
+        "tp": 0
+      },
+      "remcos": {
+        "n": 1,
+        "tp": 0
+      },
+      "silenttrinity": {
+        "n": 1,
+        "tp": 0
+      },
+      "vagent": {
+        "n": 1,
+        "tp": 0
+      },
+      "weevely": {
+        "n": 12,
+        "tp": 12
+      },
+      "zloader": {
+        "n": 5,
+        "tp": 5
+      }
+    }
+  }
+}

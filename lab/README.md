@@ -29,7 +29,7 @@ make replay-test          # 离线回放回归（用已抓 pcap，秒级）
 cd web && npm install && npm run build   # 构建 React 前端
 ```
 
-产物统一在 `out/`：`cap_<场景>.pcap`、`probe_<场景>.jsonl`（告警）、`<场景>.log`。
+产物统一在 `data/`：`cap_<场景>.pcap`、`probe_<场景>.jsonl`（告警）、`<场景>.log`。
 
 ## 目录结构
 
@@ -91,12 +91,14 @@ npm run dev                      # 开发模式
 - 数据自动生成：`python3 frontend/generate.py` 把 pcap 分析结果输出到 `web/public/data/`
 - 文档总表自动生成：`python3 frontend/gen_tool_index.py` 由 `frontend/tools.json` 生成
   [docs/TOOL_INDEX.md](docs/TOOL_INDEX.md)
+- 数据说明：每种攻击 / 良性流量的来源与生成方式见
+  [docs/DATA.md](docs/DATA.md)（数据集构成、特征管线、复现命令）
 
 ### 告警中心
 
 前端「🚨 告警中心」页展示探针输出的全部告警：统计卡（总数/分类型）、按
 类型/工具筛选、关键词搜索、3 秒自动刷新。数据来源为探针 JSON 告警行
-（实验室是 `out/probe_*.jsonl`，生产是 `/var/log/tflab/alerts.jsonl`）。
+（实验室是 `data/alerts/probe_*.jsonl`，生产是 `/var/log/tflab/alerts.jsonl`）。
 
 ```bash
 # 实验室：合并所有场景告警 + 起一个独立看板服务（可选，vite 预览也可直接看）
@@ -149,7 +151,7 @@ sudo bash deploy/install_probe.sh eth1 amd64
 # 3. 启动并验证
 systemctl start behinder-probe
 journalctl -u behinder-probe -f          # 看 JSON 告警
-tcpreplay -i eth1 out/cap_behinder.pcap --pps=10000   # 回放验收
+tcpreplay -i eth1 data/captures/cap_behinder.pcap --pps=10000   # 回放验收
 ```
 
 部署形态：

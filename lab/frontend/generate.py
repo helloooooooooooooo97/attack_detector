@@ -25,7 +25,7 @@ sys.path.insert(0, os.path.join(LAB, "framework"))
 import analyze
 
 FE = os.path.dirname(os.path.abspath(__file__))
-OUT_DIR = os.path.join(FE, "out")
+OUT_DIR = os.path.join(LAB, "data", "frontend")
 CHART_DIR = os.path.join(FE, "assets", "charts")
 WEB_DATA = os.path.join(FE, "..", "web", "public", "data")
 os.makedirs(CHART_DIR, exist_ok=True)
@@ -34,7 +34,7 @@ os.makedirs(WEB_DATA, exist_ok=True)
 
 
 def scenario_pcap(name, port):
-    path = os.path.join(LAB, "out", f"cap_{name}.pcap")
+    path = os.path.join(LAB, "data", "captures", f"cap_{name}.pcap")
     if not os.path.exists(path):
         return None
     conns = defaultdict(lambda: {"segments": {"C": [], "S": []}, "first": None, "last": None})
@@ -67,7 +67,7 @@ def records(conn):
 
 
 def analyze_behinder(conns):
-    results, _ = analyze.analyze_capture(os.path.join(LAB, "out", "cap_behinder.pcap"))
+    results, _ = analyze.analyze_capture(os.path.join(LAB, "data", "captures", "cap_behinder.pcap"))
     flows = []
     req_sizes = []
     for c in results:
@@ -112,7 +112,7 @@ def analyze_ligolo(conns):
 
 
 def analyze_normal(conns):
-    results, _ = analyze.analyze_capture(os.path.join(LAB, "out", "cap_normal.pcap"))
+    results, _ = analyze.analyze_capture(os.path.join(LAB, "data", "captures", "cap_normal.pcap"))
     all_sizes = []
     per_exchange = []
     for c in results:
@@ -434,7 +434,7 @@ footer {{ color:var(--muted); padding:20px 40px; border-top:1px solid var(--line
   <div class="cards-grid">{todo_html}</div>
 </main>
 <footer>
-  数据来源：lab/out 下真实抓包（cap_behinder.pcap / cap_ligolo.pcap / cap_normal.pcap）；
+  数据来源：lab/data/captures 下真实抓包（cap_behinder.pcap / cap_ligolo.pcap / cap_normal.pcap）；
   生成时间：{os.path.getmtime(__file__) and '2026-08-10'}。重新生成：python3 frontend/generate.py
 </footer>
 <script>

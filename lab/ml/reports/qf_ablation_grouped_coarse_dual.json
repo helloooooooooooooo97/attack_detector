@@ -1,0 +1,34 @@
+{
+  "variant": "grouped_coarse_dual",
+  "A_random_split": {
+    "recall@0.5": 0.9975093399750934,
+    "specificity@0.5": 0.999031007751938,
+    "auroc": 0.9998346800274166
+  },
+  "B_unseen_tools_3foldseeds": [
+    {
+      "seed": 42,
+      "recall": 0.4305996637399589,
+      "auroc": 0.9802805363857361,
+      "specificity": 0.9978682170542635,
+      "scan_tp": 0,
+      "ns_recall": 0.9796005099872503
+    },
+    {
+      "seed": 7,
+      "recall": 0.4263030076592565,
+      "auroc": 0.9815748964881049,
+      "specificity": 0.9988372093023256,
+      "scan_tp": 0,
+      "ns_recall": 0.969825754356141
+    },
+    {
+      "seed": 123,
+      "recall": 0.42910517466841025,
+      "auroc": 0.9927642081567634,
+      "specificity": 0.9994186046511628,
+      "scan_tp": 0,
+      "ns_recall": 0.9762005949851253
+    }
+  ]
+}

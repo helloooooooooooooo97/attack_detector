@@ -39,5 +39,5 @@ fi
 echo
 echo "完成。启动:  systemctl start behinder-probe"
 echo "看告警:    journalctl -u behinder-probe -f"
-echo "压测验收:  tcpreplay -i $IFACE <lab>/out/cap_behinder.pcap --pps=10000"
+echo "压测验收:  tcpreplay -i $IFACE <lab>/data/captures/cap_behinder.pcap --pps=10000"
 echo "确认镜像口 ring buffer 建议:  ethtool -G $IFACE rx 4096 tx 4096"

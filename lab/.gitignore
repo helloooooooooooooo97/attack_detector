@@ -1,3 +1,5 @@
-out/
+data/logs/
+data/alerts/
+data/frontend/
 .venv/
 __pycache__/

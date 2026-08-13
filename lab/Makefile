@@ -22,6 +22,6 @@ test: build-probe
 # offline regression: replay captured pcaps through the probe rules
 replay-test:
 	cd $(LAB_DIR)$(PROBE) && \
-	  ./behinder-probe-darwin -r ../../out/cap_behinder.pcap -json -ja3=false -scenario behinder 2>/dev/null | python3 -c "import sys,json,collections; print('behinder:', dict(collections.Counter(json.loads(l)['event'] for l in sys.stdin)))"; \
-	  ./behinder-probe-darwin -r ../../out/cap_normal.pcap -json -ja3=false -scenario behinder,ligolo 2>/dev/null | python3 -c "import sys,json,collections; print('normal:', dict(collections.Counter(json.loads(l)['event'] for l in sys.stdin)))"; \
-	  ./behinder-probe-darwin -r ../../out/cap_ligolo.pcap -json -ja3=false -scenario ligolo 2>/dev/null | python3 -c "import sys,json,collections; print('ligolo:', dict(collections.Counter(json.loads(l)['event'] for l in sys.stdin)))"
+	  ./behinder-probe-darwin -r ../../data/captures/cap_behinder.pcap -json -ja3=false -scenario behinder 2>/dev/null | python3 -c "import sys,json,collections; print('behinder:', dict(collections.Counter(json.loads(l)['event'] for l in sys.stdin)))"; \
+	  ./behinder-probe-darwin -r ../../data/captures/cap_normal.pcap -json -ja3=false -scenario behinder,ligolo 2>/dev/null | python3 -c "import sys,json,collections; print('normal:', dict(collections.Counter(json.loads(l)['event'] for l in sys.stdin)))"; \
+	  ./behinder-probe-darwin -r ../../data/captures/cap_ligolo.pcap -json -ja3=false -scenario ligolo 2>/dev/null | python3 -c "import sys,json,collections; print('ligolo:', dict(collections.Counter(json.loads(l)['event'] for l in sys.stdin)))"

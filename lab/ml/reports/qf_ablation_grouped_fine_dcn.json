@@ -1,0 +1,34 @@
+{
+  "variant": "grouped_fine_dcn",
+  "A_random_split": {
+    "recall@0.5": 0.9937733499377335,
+    "specificity@0.5": 0.998062015503876,
+    "auroc": 0.9987365692606214
+  },
+  "B_unseen_tools_3foldseeds": [
+    {
+      "seed": 42,
+      "recall": 0.23725014010835047,
+      "auroc": 0.936558897789977,
+      "specificity": 0.9974806201550388,
+      "scan_tp": 0,
+      "ns_recall": 0.5397365065873353
+    },
+    {
+      "seed": 7,
+      "recall": 0.4065010274612367,
+      "auroc": 0.8409310552375573,
+      "specificity": 0.9957364341085271,
+      "scan_tp": 0,
+      "ns_recall": 0.9247768805779856
+    },
+    {
+      "seed": 123,
+      "recall": 0.41658882869419017,
+      "auroc": 0.9223815448938097,
+      "specificity": 0.9982558139534884,
+      "scan_tp": 0,
+      "ns_recall": 0.947726306842329
+    }
+  ]
+}

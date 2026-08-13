@@ -13,8 +13,13 @@ lab/web/dist/
 .DS_Store
 
 # --- lab runtime artifacts (keep only traffic pcaps) ---
-lab/out/*
-!lab/out/*.pcap
+lab/data/*
+!lab/data/captures/
+lab/data/captures/*
+!lab/data/captures/*.pcap
+!lab/data/captures/rounds/
+lab/data/captures/rounds/*
+!lab/data/captures/rounds/*.pcap
 
 # --- misc ---
 *.log

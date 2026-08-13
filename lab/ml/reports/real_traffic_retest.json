@@ -1,0 +1,55 @@
+{
+  "date": "2026-08-13",
+  "real_traffic_pcaps": [
+    "data/captures/real_traffic.pcap",
+    "data/captures/real_traffic2.pcap",
+    "data/captures/real_traffic3.pcap",
+    "data/captures/real_traffic4.pcap"
+  ],
+  "n_flows": 1471,
+  "models": {
+    "flat_prod": {
+      "path": "ml/models/flow_transformer.pt",
+      "gt0.5": 10,
+      "gt0.9": 0,
+      "fpr@0.5": 0.0068,
+      "fpr@0.9": 0.0,
+      "max": 0.877,
+      "p99": 0.374
+    },
+    "flat_retrained": {
+      "path": "ml/models/flow_transformer_rt_flat.pt",
+      "gt0.5": 10,
+      "gt0.9": 0,
+      "fpr@0.5": 0.0068,
+      "fpr@0.9": 0.0,
+      "max": 0.877,
+      "p99": 0.374
+    },
+    "flat_dual": {
+      "path": "ml/models/flow_transformer_rt_flatdual.pt",
+      "gt0.5": 2,
+      "gt0.9": 1,
+      "fpr@0.5": 0.0014,
+      "fpr@0.9": 0.0007,
+      "max": 0.93,
+      "p99": 0.075,
+      "outlier": "real_traffic3 flow#12 dport=60871 non-TLS 18/13 pkts 10550/4456B dur=14.13s"
+    }
+  },
+  "a_test_recall": {
+    "flat@0.90": {
+      "recall": 0.979,
+      "fp": 0
+    },
+    "flat_dual@0.90": {
+      "recall": 0.996,
+      "fp": 1
+    },
+    "flat_dual@0.94": {
+      "recall": 0.989,
+      "fp": 0
+    }
+  },
+  "recommendation": "flat dual + threshold 0.94"
+}

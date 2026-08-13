@@ -98,4 +98,4 @@ ml/.venv/bin/python ml/train_transformer.py
 ```
 
 产物：`ml/data/dataset.pt`（6558 流）、`ml/reports/report.json`、
-`ml/reports/flow_transformer.pt`。
+`ml/models/flow_transformer.pt`。
