@@ -21,7 +21,7 @@ import torch.nn as nn
 from sklearn.preprocessing import StandardScaler
 
 LAB = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-OUT = os.path.join(LAB, "out")
+OUT = os.path.join(LAB, "data", "captures")
 
 
 # ---------------- own pcap parsing (self-contained) ----------------
@@ -189,6 +189,15 @@ def build_dataset():
         if f in skip or os.path.getsize(os.path.join(OUT, f)) == 0:
             continue
         paths.append((os.path.join(OUT, f), f[4:-5], f[4:-5]))
+    rounds_dir = os.path.join(OUT, "rounds")
+    if os.path.isdir(rounds_dir):
+        for tool in sorted(os.listdir(rounds_dir)):
+            td = os.path.join(rounds_dir, tool)
+            if not os.path.isdir(td):
+                continue
+            for f in sorted(os.listdir(td)):
+                if f.endswith(".pcap"):
+                    paths.append((os.path.join(td, f), tool, tool))
     for f in sorted(os.listdir(OUT)):
         if f.startswith("normal_") and f.endswith(".pcap"):
             paths.append((os.path.join(OUT, f), "", f))
@@ -199,7 +208,8 @@ def build_dataset():
         if os.path.exists(p):
             paths.append((p, tool, fname))
     for name in ("cap_normal.pcap", "real_traffic.pcap", "real_traffic2.pcap",
-                 "real_traffic3.pcap", "real_traffic4.pcap"):
+                 "real_traffic3.pcap", "real_traffic4.pcap",
+                 "real_traffic5.pcap", "real_traffic_sr.pcap"):
         p = os.path.join(OUT, name)
         if os.path.exists(p):
             paths.append((p, "", name))

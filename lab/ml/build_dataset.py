@@ -30,6 +30,9 @@ HTTPF = "http" in FEATURE_GROUPS
 MULTI = "multiscale" in FEATURE_GROUPS
 SHAPE = "shape" in FEATURE_GROUPS
 JA3F = "ja3" in FEATURE_GROUPS
+CIC_MODE = "cic39" in FEATURE_GROUPS or "cicfull" in FEATURE_GROUPS
+CIC39 = "cic39" in FEATURE_GROUPS
+CICFULL = "cicfull" in FEATURE_GROUPS
 
 META_BASE = 16
 META_CIC = 39
@@ -64,6 +67,9 @@ def parse_pkt(data, linktype):
         if len(data) < off + 20 or data[off] >> 4 != 4:
             return None
         ihl = (data[off] & 0x0F) * 4
+        ip_tot = struct.unpack("!H", data[off + 2:off + 4])[0]
+        if ip_tot == 0:
+            ip_tot = len(data) - off
         proto = data[off + 9]
         if proto not in (6, 17):
             return None
@@ -76,6 +82,9 @@ def parse_pkt(data, linktype):
         proto = data[off + 6]
         if proto not in (6, 17):
             return None
+        plen = struct.unpack("!H", data[off + 4:off + 6])[0]
+        ip_tot = 40 + plen
+        ihl = 40
         src = ":".join(f"{b:02x}" for b in data[off + 8:off + 24])
         dst = ":".join(f"{b:02x}" for b in data[off + 24:off + 40])
         l4 = off + 40
@@ -89,14 +98,15 @@ def parse_pkt(data, linktype):
         if ul < 8 or l4 + ul > len(data):
             return None
         payload = data[l4 + 8:l4 + ul]
-        return src, sport, dst, dport, proto, 0, payload
+        return src, sport, dst, dport, proto, 0, payload, ip_tot, 0, 8, ihl
     if len(data) < l4 + 20:
         return None
     doff = (data[l4 + 12] >> 4) * 4
     if doff < 20 or l4 + doff > len(data):
         return None
     payload = data[l4 + doff:]
-    return src, sport, dst, dport, proto, data[l4 + 13], payload
+    win = struct.unpack("!H", data[l4 + 14:l4 + 16])[0]
+    return src, sport, dst, dport, proto, data[l4 + 13], payload, ip_tot, win, doff, ihl
 
 
 def read_pcap(path):
@@ -223,12 +233,14 @@ def extract_flows(path):
         "c": [], "s": [], "first": None, "last": None, "client": None,
         "server": None,
         "dport": 0, "proto": 0, "flagcnt": collections.Counter(),
-        "synack": 0, "synonly": 0, "rst": 0, "payload_seen": False})
+        "synack": 0, "synonly": 0, "rst": 0, "payload_seen": False,
+        "c_meta": [], "s_meta": []})
     for ts, data, lt in read_pcap(path):
         pkt = parse_pkt(data, lt)
         if pkt is None:
             continue
-        src, sport, dst, dport, proto, flags, payload = pkt
+        (src, sport, dst, dport, proto, flags, payload,
+         pkt_len, win, doff, ihl) = pkt
         key = frozenset(((src, sport), (dst, dport), proto))
         c = conns[key]
         c["proto"] = proto
@@ -252,10 +264,12 @@ def extract_flows(path):
                 c["payload_seen"] = True
         if (src, sport) == c["client"]:
             c["c"].append((ts, payload))
+            c["c_meta"].append((ts, pkt_len, len(payload), flags, win, doff, ihl))
         else:
             if c["server"] is None:
                 c["server"] = (src, sport)
             c["s"].append((ts, payload))
+            c["s_meta"].append((ts, pkt_len, len(payload), flags, win, doff, ihl))
     flows = []
     for c in conns.values():
         if not c["c"] and not c["s"]:
@@ -346,9 +360,135 @@ def cic_features(c):
     return feats
 
 
+CICFULL_NAMES = [
+    "flow_duration", "tot_fwd_pkts", "tot_bwd_pkts", "totlen_fwd_pkts",
+    "totlen_bwd_pkts", "fwd_pkt_len_max", "fwd_pkt_len_min",
+    "fwd_pkt_len_mean", "fwd_pkt_len_std", "bwd_pkt_len_max",
+    "bwd_pkt_len_min", "bwd_pkt_len_mean", "bwd_pkt_len_std",
+    "flow_byts_s", "flow_pkts_s", "flow_iat_mean", "flow_iat_std",
+    "flow_iat_max", "flow_iat_min", "fwd_iat_tot", "fwd_iat_mean",
+    "fwd_iat_std", "fwd_iat_max", "fwd_iat_min", "bwd_iat_tot",
+    "bwd_iat_mean", "bwd_iat_std", "bwd_iat_max", "bwd_iat_min",
+    "fwd_psh_flags", "bwd_psh_flags", "fwd_urg_flags", "bwd_urg_flags",
+    "fwd_header_len", "bwd_header_len", "fwd_packets_s", "bwd_packets_s",
+    "min_pkt_len", "max_pkt_len", "pkt_len_mean", "pkt_len_std",
+    "pkt_len_var", "fin_flag_cnt", "syn_flag_cnt", "rst_flag_cnt",
+    "psh_flag_cnt", "ack_flag_cnt", "urg_flag_cnt", "cwe_flag_cnt",
+    "ece_flag_cnt", "down_up_ratio", "avg_pkt_size", "avg_fwd_seg_size",
+    "avg_bwd_seg_size", "fwd_avg_bytes_bulk", "fwd_avg_packets_bulk",
+    "fwd_avg_bulk_rate", "bwd_avg_bytes_bulk", "bwd_avg_packets_bulk",
+    "bwd_avg_bulk_rate", "subflow_fwd_pkts", "subflow_fwd_byts",
+    "subflow_bwd_pkts", "subflow_bwd_byts", "init_fwd_win_byts",
+    "init_bwd_win_byts", "fwd_act_data_pkts", "fwd_seg_size_min",
+    "active_min", "active_max", "active_mean", "active_std",
+    "idle_min", "idle_max", "idle_mean", "idle_std",
+]  # 76 dims, CICFlowMeter-style (bulk rate approximated as 0)
+
+
+def cic_full_features(c):
+    """CICFlowMeter-style full flow statistics (76 dims), using IP total
+    lengths, full TCP flag set, window sizes and header lengths."""
+    f_ts = [m[0] for m in c["c_meta"]]
+    f_len = [m[1] for m in c["c_meta"]]
+    f_pl = [m[2] for m in c["c_meta"]]
+    f_fl = [m[3] for m in c["c_meta"]]
+    f_win = [m[4] for m in c["c_meta"]]
+    f_hdr = [m[5] + m[6] for m in c["c_meta"]]
+    s_ts = [m[0] for m in c["s_meta"]]
+    s_len = [m[1] for m in c["s_meta"]]
+    s_pl = [m[2] for m in c["s_meta"]]
+    s_fl = [m[3] for m in c["s_meta"]]
+    s_win = [m[4] for m in c["s_meta"]]
+    s_hdr = [m[5] + m[6] for m in c["s_meta"]]
+
+    def st(vals):
+        if not vals:
+            return [0.0, 0.0, 0.0, 0.0]
+        a = np.asarray(vals, dtype=float)
+        return [float(a.min()), float(a.max()), float(a.mean()),
+                float(a.std()) if len(a) > 1 else 0.0]
+
+    def iats(ts):
+        return [b - a for a, b in zip(ts, ts[1:]) if b > a]
+
+    def flag_cnt(ms, mask):
+        return float(sum(1 for m in ms if m[3] & mask))
+
+    dur = max(0.0, (c["last"] or 0) - (c["first"] or 0))
+    f_cnt, s_cnt = len(f_len), len(s_len)
+    tot_c, tot_s = sum(f_len), sum(s_len)
+    all_len = f_len + s_len
+    all_ts = sorted(f_ts + s_ts)
+    f_iat, b_iat, fl_iat = iats(f_ts), iats(s_ts), iats(all_ts)
+
+    fmin, fmax, fmean, fstd = st(f_len)
+    smin, smax, smean, sstd = st(s_len)
+    imin, imax, imean, istd = st(fl_iat)
+    pmin, pmax, pmean, pstd = st(all_len)
+
+    def iat_stats(vals):
+        tot = float(sum(vals))
+        mn, mx, me, sd = st(vals)
+        return [tot, me, sd, mx, mn]
+
+    fwd_init_win = 0.0
+    for i, fl in enumerate(f_fl):
+        if fl & 0x02:
+            fwd_init_win = float(f_win[i])
+            break
+    bwd_init_win = 0.0
+    for i, fl in enumerate(s_fl):
+        if fl & 0x12 == 0x12:
+            bwd_init_win = float(s_win[i])
+            break
+
+    active, idle = [], []
+    prev = None
+    for t in all_ts:
+        if prev is not None:
+            g = t - prev
+            (idle if g > 1.0 else active).append(g)
+        prev = t
+
+    f = [
+        dur, float(f_cnt), float(s_cnt), float(tot_c), float(tot_s),
+        fmax, fmin, fmean, fstd, smax, smin, smean, sstd,
+        (tot_c + tot_s) / dur if dur > 0 else 0.0,
+        (f_cnt + s_cnt) / dur if dur > 0 else 0.0,
+        imean, istd, imax, imin,
+    ] + iat_stats(f_iat) + iat_stats(b_iat)
+    f += [
+        flag_cnt(c["c_meta"], 0x08), flag_cnt(c["s_meta"], 0x08),
+        flag_cnt(c["c_meta"], 0x20), flag_cnt(c["s_meta"], 0x20),
+        float(sum(f_hdr)), float(sum(s_hdr)),
+        f_cnt / dur if dur > 0 else 0.0,
+        s_cnt / dur if dur > 0 else 0.0,
+        pmin, pmax, pmean, pstd, pstd * pstd,
+    ]
+    f += [flag_cnt(c["c_meta"] + c["s_meta"], m)
+          for m in (0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x80, 0x40)]
+    f += [
+        tot_s / tot_c if tot_c > 0 else 0.0,
+        pmean,
+        float(np.mean(f_pl)) if f_pl else 0.0,
+        float(np.mean(s_pl)) if s_pl else 0.0,
+        0.0, 0.0, 0.0, 0.0, 0.0, 0.0,  # bulk (approximated)
+        float(min(4, f_cnt)), float(sum(f_len[:4])),
+        float(min(4, s_cnt)), float(sum(s_len[:4])),
+        fwd_init_win, bwd_init_win,
+        float(sum(1 for p in f_pl if p > 0)),
+        float(min(f_pl)) if f_pl else 0.0,
+    ] + st(active) + st(idle)
+    return f
+
+
 def all_meta(c):
     """Fused flow-level vector: behavior features + CIC aggregates + optional
     extra feature groups (cross-flow slots are filled later)."""
+    if CIC39:
+        return [np.log1p(v) for v in cic_features(c)]
+    if CICFULL:
+        return [np.log1p(v) for v in cic_full_features(c)]
     feats = flow_meta(c) + [np.log1p(v) for v in cic_features(c)]
     if SHAPE:
         feats += shape_features(c)
@@ -508,6 +648,8 @@ def cross_flow_meta(flows, metas):
     cross-flow slots (handshake ratios, multi-scale windows, JA3 stability).
     Flows are grouped by client IP and time-sorted, so each flow only scans its
     own source's 60s neighbourhood instead of the whole flow list."""
+    if CIC_MODE:
+        return  # pure-CIC modes have no behavior/cross-flow slots
     off, _ = extra_layout()
     by_src = {}
     for i, f in enumerate(flows):
@@ -705,11 +847,16 @@ def main():
              "fin_cnt", "syn_cnt", "rst_cnt", "psh_cnt", "ack_cnt",
              "down_up_ratio", "active_min", "active_max", "active_mean",
              "active_std", "idle_min", "idle_max", "idle_mean", "idle_std"]
-    meta_n = (["is_tls", "has_sni", "tls13", "duration", "tot_c", "tot_s",
-               "n_events", "dport", "same_port_burst", "ports_sweep",
-               "ch_len", "sh_len", "req_resp_ratio", "max_rec", "estab",
-               "distinct_dsts"]
-              + ["cic_" + n for n in cic_n])
+    if CIC39:
+        meta_n = ["cic_" + n for n in cic_n]
+    elif CICFULL:
+        meta_n = ["cicf_" + n for n in CICFULL_NAMES]
+    else:
+        meta_n = (["is_tls", "has_sni", "tls13", "duration", "tot_c", "tot_s",
+                   "n_events", "dport", "same_port_burst", "ports_sweep",
+                   "ch_len", "sh_len", "req_resp_ratio", "max_rec", "estab",
+                   "distinct_dsts"]
+                  + ["cic_" + n for n in cic_n])
     if SHAPE:
         meta_n += ["iat_cv", "iat_p50", "iat_p90", "size_cv", "size_entropy"]
     if HTTPF:
