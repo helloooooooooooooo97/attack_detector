@@ -21,6 +21,12 @@ lab/data/captures/*
 lab/data/captures/rounds/*
 !lab/data/captures/rounds/*.pcap
 
+# GitHub 100MB single-file limit: keep oversized captures local-only
+lab/data/captures/real_traffic_sr.pcap
+lab/data/captures/real_traffic_sr2.pcap
+lab/data/captures/wenxin.pcap
+lab/data/captures/kefei.pcap
+
 # --- misc ---
 *.log
 *.deleted
