@@ -1,0 +1,7 @@
+{
+  "description": "XiebroC2 金标准（C2 类，AES 加密 + 15s 心跳）",
+  "events": [
+    {"event": "xiebro.heartbeat", "min_count": 1}
+  ],
+  "features_note": "非 TLS 单条长连接；C→S 每 15s 发 [4B LE 长度][48B AES-ECB 密文]（ClientPing 固定明文→固定密文）；S→C 零回包"
+}

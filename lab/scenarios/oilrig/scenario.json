@@ -1,0 +1,15 @@
+{
+  "name": "oilrig",
+  "description": "OilRig（apt，协议驱动仿真）",
+  "image": "behinder-lab",
+  "duration": 91,
+  "capture_filter": "tcp port 8093",
+  "probe_args": "-json -ja3=false -idle 15 -scenario oilrig -debug",
+  "expected": [
+    {
+      "event": "oilrig.beacon",
+      "min_count": 2
+    }
+  ],
+  "negative": false
+}

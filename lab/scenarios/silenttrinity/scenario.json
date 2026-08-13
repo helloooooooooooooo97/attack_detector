@@ -1,0 +1,15 @@
+{
+  "image": "behinder-lab",
+  "probe_args": "-json -ja3=false -idle 15 -scenario silenttrinity -debug",
+  "expected": [
+    {
+      "event": "silenttrinity.checkin",
+      "min_count": 1
+    }
+  ],
+  "negative": false,
+  "name": "silenttrinity",
+  "description": "SILENTTRINITY（gRPC/HTTP2+mTLS，agent 仅 Windows，协议驱动仿真）：HTTPS 长连接周期 checkin 10s±10%",
+  "duration": 85,
+  "capture_filter": "tcp port 8450"
+}

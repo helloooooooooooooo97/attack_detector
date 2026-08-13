@@ -1,0 +1,30 @@
+{
+  "name": "ksrat",
+  "transport": "http",
+  "host": "127.0.0.1",
+  "port": 8086,
+  "method": "POST",
+  "path": "/ks/login",
+  "params": [
+    [
+      "data",
+      "b64"
+    ]
+  ],
+  "headers": {
+    "User-Agent": "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.1)"
+  },
+  "interval": 20,
+  "jitter": 0.15,
+  "req_size": [
+    400,
+    800
+  ],
+  "resp_size": [
+    200,
+    400
+  ],
+  "keep_alive": false,
+  "duration": 85,
+  "note": "海莲花使用的远控木马（闭源，HTTP POST 分钟级周期回连，固定 UA/URL，实验室 20s，协议驱动仿真）"
+}

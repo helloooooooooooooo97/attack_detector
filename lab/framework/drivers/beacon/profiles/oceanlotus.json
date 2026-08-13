@@ -1,0 +1,17 @@
+{
+  "name": "oceanlotus",
+  "transport": "https",
+  "host": "cdn.oceanlotus.local",
+  "port": 8448,
+  "method": "POST",
+  "path": "/data/report",
+  "params": [["r", "b64"]],
+  "headers": {"User-Agent": "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)"},
+  "interval": 20.0,
+  "jitter": 0.2,
+  "req_size": [800, 1200],
+  "resp_size": [300, 600],
+  "keep_alive": false,
+  "duration": 80,
+  "note": "海莲花 OceanLotus：诱饵投递 + 远控 HTTPS 周期回连，自定义加密，证书/UA 固定（闭源，协议驱动）"
+}

@@ -1,0 +1,17 @@
+{
+  "name": "silenttrinity",
+  "transport": "https",
+  "host": "st-grpc.local",
+  "port": 8450,
+  "method": "POST",
+  "path": "/st.teamserver.grpc/Checkin",
+  "params": [["data", "b64"]],
+  "headers": {"User-Agent": "grpc-python/1.48.0"},
+  "interval": 10.0,
+  "jitter": 0.1,
+  "req_size": [400, 700],
+  "resp_size": [400, 700],
+  "keep_alive": true,
+  "duration": 70,
+  "note": "SILENTTRINITY：Python 服务端（Linux 可跑）+ PowerShell agent（仅 Windows），gRPC/HTTP2 + mTLS，实验室以 HTTPS 长连接周期 checkin 仿真（h2 侧信道形态：长连接 + 周期双向记录）"
+}

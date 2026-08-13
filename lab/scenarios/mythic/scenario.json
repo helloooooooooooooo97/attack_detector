@@ -1,0 +1,16 @@
+{
+  "name": "mythic",
+  "description": "Mythic C2（真实 server + Athena linux-arm64 agent，http profile，~10s 周期 check-in；依赖宿主已启动的 Mythic 栈）",
+  "image": "tflab-mythic",
+  "network": "host",
+  "duration": 90,
+  "capture_filter": "tcp port 80",
+  "probe_args": "-json -ja3=false -idle 15 -scenario mythic -debug",
+  "expected": [
+    {
+      "event": "mythic.http_checkin",
+      "min_count": 1
+    }
+  ],
+  "negative": false
+}

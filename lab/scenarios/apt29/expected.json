@@ -1,0 +1,10 @@
+{
+  "description": "apt29 金标准（apt 类）",
+  "events": [
+    {
+      "event": "apt29.beacon",
+      "min_count": 2
+    }
+  ],
+  "features_note": "APT29（闭源，beacon 型 HTTPS 回连，周期+抖动，载荷加密，协议驱动仿真）"
+}

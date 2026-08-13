@@ -1,0 +1,12 @@
+{
+  "name": "oceanlotus",
+  "description": "海莲花 OceanLotus（闭源，协议驱动仿真）：HTTPS 远控周期回连，固定 UA/SNI，20s±20%，请求显著大于响应",
+  "image": "behinder-lab",
+  "duration": 100,
+  "capture_filter": "tcp port 8448",
+  "probe_args": "-json -ja3=false -idle 15 -scenario oceanlotus -debug",
+  "expected": [
+    {"event": "oceanlotus.beacon", "min_count": 2}
+  ],
+  "negative": false
+}

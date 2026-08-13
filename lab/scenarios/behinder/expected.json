@@ -1,0 +1,8 @@
+{
+  "description": "冰蝎 v4.0.7 内存马型加密流量金标准",
+  "events": [
+    {"event": "behinder.mem_shell_flow", "min_count": 3},
+    {"event": "behinder.memory_shell_aggregate", "min_count": 1}
+  ],
+  "features_note": "每条流 13±3 条 TLS 记录；请求 10-12KB 含恒定 8225B 分块；流时长 <2.5s；单流单操作"
+}

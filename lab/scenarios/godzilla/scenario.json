@@ -1,0 +1,15 @@
+{
+  "name": "godzilla",
+  "description": "Godzilla v4.0.1 PHP webshell（真实 payload.php + 官方 php_xor_base64 加密，会话式操作）",
+  "image": "behinder-lab",
+  "duration": 60,
+  "capture_filter": "tcp port 8080",
+  "probe_args": "-json -ja3=false -idle 15 -scenario godzilla -debug",
+  "expected": [
+    {
+      "event": "godzilla.php_flow",
+      "min_count": 2
+    }
+  ],
+  "negative": false
+}

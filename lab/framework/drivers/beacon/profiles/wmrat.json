@@ -1,0 +1,30 @@
+{
+  "name": "wmrat",
+  "transport": "http",
+  "host": "127.0.0.1",
+  "port": 8088,
+  "method": "POST",
+  "path": "/wm/update",
+  "params": [
+    [
+      "data",
+      "b64"
+    ]
+  ],
+  "headers": {
+    "User-Agent": "Mozilla/5.0 (Windows NT 6.1; Win64; x64)"
+  },
+  "interval": 12,
+  "jitter": 0.2,
+  "req_size": [
+    300,
+    600
+  ],
+  "resp_size": [
+    150,
+    400
+  ],
+  "keep_alive": false,
+  "duration": 61,
+  "note": "蔓灵花组织远控木马（闭源，HTTP POST 周期回连 + 3DES 等自定义加密，协议驱动仿真）"
+}

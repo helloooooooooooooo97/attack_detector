@@ -1,0 +1,12 @@
+{
+  "name": "bruteforce",
+  "description": "暴力破解/端口扫描行为：A 向 B 的同一端口发起大量短连接（SSH 登录爆破形态，80 次/8s）",
+  "image": "behinder-lab",
+  "duration": 40,
+  "capture_filter": "tcp port 2222",
+  "probe_args": "-json -ja3=false -idle 15 -scenario bruteforce -debug",
+  "expected": [
+    {"event": "bruteforce.conn_burst", "min_count": 1}
+  ],
+  "negative": false
+}

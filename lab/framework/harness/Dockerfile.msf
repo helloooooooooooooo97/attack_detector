@@ -1,0 +1,8 @@
+# Dedicated image for the Metasploit scenario (Kali ships metasploit-framework).
+FROM kalilinux/kali-rolling
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends metasploit-framework tcpdump curl ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /lab

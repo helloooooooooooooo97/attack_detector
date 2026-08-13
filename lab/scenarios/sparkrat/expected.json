@@ -1,0 +1,10 @@
+{
+  "description": "sparkrat 金标准（rat 类）",
+  "events": [
+    {
+      "event": "sparkrat.beacon",
+      "min_count": 2
+    }
+  ],
+  "features_note": "远控木马（闭源，HTTP 周期上线心跳，固定 UA/URL，协议驱动仿真）"
+}

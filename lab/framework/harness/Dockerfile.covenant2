@@ -1,0 +1,78 @@
+# Covenant C2 scenario image: builds the server self-contained on arm64.
+# The SDK tarball comes from builds.dotnet.microsoft.com (faster than mcr
+# from this network); the runtime is bundled so no .NET install is needed
+# at scenario runtime.
+FROM behinder-lab
+
+RUN apt-get update -qq \
+    && apt-get install -y -qq --no-install-recommends curl ca-certificates git \
+    && rm -rf /var/lib/apt/lists/* \
+    && curl -fsSL -o /tmp/dotnet-sdk.tar.gz \
+       https://builds.dotnet.microsoft.com/dotnet/Sdk/8.0.100/dotnet-sdk-8.0.100-linux-arm64.tar.gz \
+    && mkdir -p /opt/dotnet \
+    && tar -xzf /tmp/dotnet-sdk.tar.gz -C /opt/dotnet \
+    && rm -f /tmp/dotnet-sdk.tar.gz \
+    && git clone --depth 1 https://github.com/cobbr/Covenant.git /opt/Covenant \
+    && cd /opt/Covenant \
+    && git submodule update --init --depth 1 --recursive
+
+ENV DOTNET_ROOT=/opt/dotnet PATH=/opt/dotnet:$PATH \
+    DOTNET_CLI_TELEMETRY_OPTOUT=1 DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
+
+# .NET Core 3.1 runtime needs libssl1.1 (Ubuntu 22.04 ships OpenSSL 3 only);
+# pull the Debian bullseye arm64 package (same lib the official runtime uses).
+RUN curl -fsSL -o /tmp/libssl1.1.deb \
+      http://deb.debian.org/debian/pool/main/o/openssl/libssl1.1_1.1.1w-0+deb11u1_arm64.deb \
+    && dpkg -i /tmp/libssl1.1.deb \
+    && rm -f /tmp/libssl1.1.deb
+
+RUN set -o pipefail \
+    && cd /opt/Covenant/Covenant \
+    # on Linux the compiler invokes "dotnet publish -c release" but then
+    # looks for bin/Release (case-sensitive on Linux); align the casing.
+    && sed -i "s/publish -c release/publish -c Release/" Core/Compiler.cs \
+    && dotnet publish -c Release -r linux-arm64 --self-contained true \
+       -p:PublishSingleFile=false -o /opt/covenant-build 2>&1 | tail -5 \
+    && cp -r /opt/Covenant/Covenant/Data /opt/covenant-build/ \
+    && mkdir -p /opt/covenant-build/Data/Grunt/GruntHTTP/GruntHTTPStager \
+    && printf '<Project Sdk="Microsoft.NET.Sdk">\n  <PropertyGroup>\n    <OutputType>Exe</OutputType>\n    <TargetFramework>netcoreapp3.1</TargetFramework>\n    <PublishSingleFile>true</PublishSingleFile>\n  </PropertyGroup>\n</Project>\n' \
+       > /opt/covenant-build/Data/Grunt/GruntHTTP/GruntHTTPStager/GruntHTTPStager.csproj \
+    # upstream bug: the template line is indented, but GruntTemplateReplace()
+    # searches for the unindented marker, so the MessageTransform class is
+    # never inserted; align the indentation so generation compiles.
+    && sed -i 's#^[[:space:]]*// {{REPLACE_PROFILE_MESSAGE_TRANSFORM}}#// {{REPLACE_PROFILE_MESSAGE_TRANSFORM}}#' \
+       /opt/covenant-build/Data/Grunt/GruntHTTP/GruntHTTPStager.cs \
+    # RSACryptoServiceProvider + CspParameters is Windows-only (CAPI); the
+    # stager must run on linux-arm64, so switch to the portable RSA.Create.
+    && sed -i 's/RSACryptoServiceProvider rsa = new RSACryptoServiceProvider(2048, new CspParameters());/System.Security.Cryptography.RSA rsa = System.Security.Cryptography.RSA.Create(2048);/' \
+       /opt/covenant-build/Data/Grunt/GruntHTTP/GruntHTTPStager.cs \
+    && sed -i 's/rsa.Decrypt(PartiallyDecrypted, true)/rsa.Decrypt(PartiallyDecrypted, System.Security.Cryptography.RSAEncryptionPadding.OaepSHA1)/' \
+       /opt/covenant-build/Data/Grunt/GruntHTTP/GruntHTTPStager.cs \
+    # Ssl3 is not supported on .NET Core 3.1/Linux; the lab listener is
+    # plain HTTP anyway, so pin Tls12 instead of the Windows-era combo.
+    && sed -i "s/ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls;/ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;/" \
+       /opt/covenant-build/Data/Grunt/GruntHTTP/GruntHTTPStager.cs \
+    # the repo ships the executor source only as a flat file; CompileGruntCode
+    # expects Data/Grunt/GruntHTTP/GruntHTTP/GruntHTTP.{cs,csproj} (same
+    # layout as the Brute template), so materialize it here.
+    && mkdir -p /opt/covenant-build/Data/Grunt/GruntHTTP/GruntHTTP \
+    && cp /opt/covenant-build/Data/Grunt/GruntHTTP/GruntHTTP.cs \
+          /opt/covenant-build/Data/Grunt/GruntHTTP/GruntHTTP/ \
+    && printf '<Project Sdk="Microsoft.NET.Sdk">\n  <PropertyGroup>\n    <OutputType>library</OutputType>\n    <TargetFramework>netcoreapp3.1</TargetFramework>\n    <PublishSingleFile>true</PublishSingleFile>\n  </PropertyGroup>\n</Project>\n' \
+       > /opt/covenant-build/Data/Grunt/GruntHTTP/GruntHTTP/GruntHTTP.csproj \
+    # the executor template uses Windows-only types (PipeSecurity,
+    # WindowsIdentity); reference the compatibility packages so the
+    # netcoreapp3.1 build succeeds on Linux.
+    && python3 - <<'PY'
+import pathlib
+p = pathlib.Path("/opt/covenant-build/Data/Grunt/GruntHTTP/GruntHTTP/GruntHTTP.csproj")
+t = p.read_text()
+t = t.replace("</Project>", """  <ItemGroup>
+    <PackageReference Include="System.IO.Pipes.AccessControl" Version="4.7.0" />
+    <PackageReference Include="System.Security.Principal.Windows" Version="4.7.0" />
+  </ItemGroup>
+</Project>""")
+p.write_text(t)
+PY
+
+WORKDIR /opt/Covenant/Covenant

@@ -1,0 +1,15 @@
+{
+  "image": "behinder-lab",
+  "probe_args": "-json -ja3=false -idle 15 -scenario rustystealer -debug",
+  "expected": [
+    {
+      "event": "rustystealer.exfil_burst",
+      "min_count": 2
+    }
+  ],
+  "negative": false,
+  "name": "rustystealer",
+  "description": "RustyStealer（闭源，协议驱动仿真）：HTTPS 加密外传短突发，上行为主",
+  "duration": 75,
+  "capture_filter": "tcp port 8451"
+}

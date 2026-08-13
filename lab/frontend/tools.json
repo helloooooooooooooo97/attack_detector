@@ -1,0 +1,604 @@
+{
+  "source": "https://www.viewintech.com/techposts",
+  "generated": "2026-08-10",
+  "note": "工具总表。integrated=true 表示已在 TFLab 中完成场景集成与检测验证（开源工具打勾）。fingerprint：已集成=实验室实测，未集成=公开分析资料整理。",
+  "categories": {
+    "webshell": "WebShell 管理/内存马工具",
+    "c2": "C2 命令控制框架",
+    "tunnel": "隧道/内网穿透/代理工具",
+    "rat": "远控/窃密木马",
+    "apt": "APT 组织攻击武器"
+  },
+  "tools": [
+    {
+      "id": "behinder",
+      "name": "冰蝎 Behinder",
+      "category": "webshell",
+      "open_source": true,
+      "integrated": true,
+      "article_id": 208,
+      "note": "动态二进制加密 webshell，内存马型加密流量已集成检测",
+      "fingerprint": "单流单操作；13±3 条 TLS 记录；8225B 恒定分块；请求>响应；JA3 稳定"
+    },
+    {
+      "id": "godzilla",
+      "name": "哥斯拉 Godzilla",
+      "category": "webshell",
+      "open_source": true,
+      "integrated": true,
+      "article_id": 149,
+      "note": "AES-CBC 动态密钥 webshell 管理工具（php_xor_base64 会话式，已集成检测）",
+      "fingerprint": "非 TLS HTTP；首条 53KB payload 上传→会话；后续 406B XOR+base64 POST→1.1-1.5KB 响应（md5 包裹）；操作间隔 1-5s"
+    },
+    {
+      "id": "antsword",
+      "fingerprint": "非 TLS HTTP；每操作短连接：pwd=@eval(@base64_decode($_POST[rand])) + 1.8KB base64 代码；响应=随机 hex tag+明文输出",
+      "name": "蚁剑 AntSword",
+      "category": "webshell",
+      "open_source": true,
+      "integrated": true,
+      "article_id": 1,
+      "note": "跨平台 webshell 管理器（官方 core 协议已集成检测）"
+    },
+    {
+      "id": "chopper",
+      "fingerprint": "非 TLS HTTP POST 短流（操作即连接，无心跳）；参数固定字段名 z0/z1 + base64 eval 载荷；请求 500B-2KB；响应=明文输出",
+      "name": "菜刀 China Chopper",
+      "category": "webshell",
+      "open_source": false,
+      "integrated": true,
+      "article_id": 1,
+      "note": "经典一句话木马管理工具（协议驱动 z0/z1 + base64 eval，已集成实时检测）"
+    },
+    {
+      "id": "weevely",
+      "name": "Weevely",
+      "category": "webshell",
+      "open_source": true,
+      "integrated": true,
+      "article_id": 1,
+      "note": "PHP webshell 管理框架（文章 id=1）；交互式命令会话检测，已集成实时检测",
+      "fingerprint": "非 TLS；同端点重复短 HTTP 流（命令节奏 2-30s），请求 400-700B/响应 ~220B"
+    },
+    {
+      "id": "vagent",
+      "fingerprint": "HTTPS 长连接（会话级生命周期）；周期 15s±20% 小包心跳；固定 SNI vagent-c2.local；无文件落盘",
+      "name": "Vagent 内存马",
+      "category": "webshell",
+      "open_source": false,
+      "integrated": true,
+      "article_id": 165,
+      "note": "注入型内存马加密通信（闭源，协议驱动仿真已集成检测）"
+    },
+    {
+      "id": "cobaltstrike",
+      "name": "Cobalt Strike",
+      "category": "c2",
+      "open_source": false,
+      "integrated": true,
+      "article_id": 3,
+      "note": "商业 C2（beacon 协议字节兼容实现 geacon + 协议级 teamserver 已集成检测）",
+      "fingerprint": "非 TLS HTTP 短流；GET /load + 超长 Cookie（RSA 加密 metadata ~440B base64）；响应 200 + 固定 32B AES+HMAC 加密体；固定 MSIE9 UA；周期轮询"
+    },
+    {
+      "id": "merlin",
+      "name": "Merlin",
+      "category": "c2",
+      "open_source": true,
+      "integrated": true,
+      "article_id": 140,
+      "note": "Go 编写，JWE 加密通信，已集成实时检测",
+      "fingerprint": "HTTPS/h2 周期 checkin（30s±3s）；JWE 加密载荷"
+    },
+    {
+      "id": "covenant",
+      "name": "Covenant",
+      "category": "c2",
+      "open_source": true,
+      "integrated": true,
+      "article_id": 133,
+      "note": ".NET C2（真实 linux-arm64 grunt 已集成检测；修复 Linux 兼容后生成+上线）",
+      "fingerprint": "非 TLS HTTP；POST 到 profile URL（/en-us/*.html）；body i=<32hex>&data=<base64 JSON>（GUID/Type/IV/EncryptedMessage/HMAC）；ASPSESSIONID cookie；固定 Chrome41 UA；周期 check-in"
+    },
+    {
+      "id": "mythic",
+      "fingerprint": "非 TLS HTTP 长连接；周期 GET /index?q=<长 base64 密文>（~390B）+ 初始 POST /data（~2.7KB）；响应 200 + Cache-Control: max-age=0,no-cache（~200B）；~10s 周期±抖动",
+      "name": "Mythic",
+      "category": "c2",
+      "open_source": true,
+      "integrated": true,
+      "article_id": 116,
+      "note": "Docker 化 C2（真实 server + Athena linux-arm64 agent 已集成检测；http profile 周期 check-in）"
+    },
+    {
+      "id": "silenttrinity",
+      "fingerprint": "HTTPS 长连接周期 checkin（仿真 gRPC/HTTP2+mTLS 形态）；固定 SNI st-grpc.local；周期 10s±10%；staging 与 checkin 节奏固定",
+      "name": "SILENTTRINITY",
+      "category": "c2",
+      "open_source": true,
+      "integrated": true,
+      "article_id": 121,
+      "note": "基于 IronPython 的 C2（agent 仅 Windows，gRPC/HTTP2 长连接仿真已集成检测）"
+    },
+    {
+      "id": "evilox",
+      "fingerprint": "HTTPS 周期 checkin（20s±20%）；JXA 载荷；UA 伪装 Mac Safari；固定 SNI evilox-c2.local",
+      "name": "EvilOSX",
+      "category": "c2",
+      "open_source": true,
+      "integrated": true,
+      "article_id": 128,
+      "note": "macOS 后渗透框架（agent 仅 macOS，协议驱动仿真已集成检测）"
+    },
+    {
+      "id": "octopus",
+      "fingerprint": "非 TLS HTTP beacon（15s±20%）；POST /api/v1/beacon + 加密 JSON 载荷",
+      "name": "Octopus",
+      "category": "c2",
+      "open_source": true,
+      "integrated": true,
+      "article_id": 124,
+      "note": "Go C2，多协议通信（PowerShell agent 仅 Windows，协议驱动仿真已集成检测）"
+    },
+    {
+      "id": "nimplant",
+      "fingerprint": "HTTPS beacon 短流（每条连接一次 checkin，无长连接）；固定 SNI nimplant-c2.local；POST /api/init + base64 加密二进制载荷；实验室 15s±20% 周期（真实默认 60s±抖动）",
+      "name": "NimPlant",
+      "category": "c2",
+      "open_source": true,
+      "integrated": true,
+      "article_id": 125,
+      "note": "Nim 编写的 C2 植入体（Windows .NET agent 仅 Windows，协议驱动仿真已集成检测）"
+    },
+    {
+      "id": "deimos",
+      "fingerprint": "非 TLS TCP；首包=8B 长度+256B RSA-OAEP+AES-CBC（init 568B/checkin 296B，回包 40-72B）；15s 周期短连接",
+      "name": "DeimosC2",
+      "category": "c2",
+      "open_source": true,
+      "integrated": true,
+      "article_id": 8,
+      "note": "跨平台 C2 框架（真实 TCP agent 已集成检测）"
+    },
+    {
+      "id": "bruteratel",
+      "fingerprint": "HTTPS POST beacon 短流；固定 SNI c4-bruteratel.local；载荷 profile 可塑（AES/RSA 加密）；实验室 20s±15% 周期（真实默认 ~35-60s）",
+      "name": "Brute Ratel C4",
+      "category": "c2",
+      "open_source": false,
+      "integrated": true,
+      "article_id": 17,
+      "note": "商业攻击框架 BADGER 通信（闭源 agent 仅 Windows，协议驱动仿真已集成检测）"
+    },
+    {
+      "id": "platypus",
+      "name": "Platypus",
+      "category": "c2",
+      "open_source": true,
+      "integrated": true,
+      "article_id": 174,
+      "note": "多会话反向 Shell 管理器（文章 id=174）；v1.5 注册流程已打通，已集成实时检测",
+      "fingerprint": "TLS 长连接；注册后周期 RPC 小交换；连接会话持续"
+    },
+    {
+      "id": "xiebro",
+      "name": "Xiebro",
+      "category": "c2",
+      "open_source": true,
+      "integrated": true,
+      "article_id": 144,
+      "note": "Go/.NET C2，AES 加密，15s 心跳（真实 Linux client 已集成检测）",
+      "fingerprint": "非 TLS 单条长连接；每 15s [4B LE 长度][48B AES-ECB 密文]（ClientPing 固定明文→固定密文）；S→C 零回包"
+    },
+    {
+      "id": "adaptix",
+      "fingerprint": "非 TLS HTTP 单端点短流；POST /checkin + RC4 加密载荷（base64 参数 v）；8s±20% 周期 checkin",
+      "name": "AdaptixC2",
+      "category": "c2",
+      "open_source": true,
+      "integrated": true,
+      "article_id": 202,
+      "note": "轻量 C2（服务端真实验证 + BeaconHTTP 协议驱动仿真，agent 仅 Windows）"
+    },
+    {
+      "id": "vshell",
+      "name": "Vshell",
+      "category": "c2",
+      "open_source": true,
+      "integrated": true,
+      "article_id": 179,
+      "note": "多协议红队工具（已停更停发授权，协议驱动仿真已集成检测）",
+      "fingerprint": "TCP 长连接；10s 固定心跳小包（40-100B）；VKey 认证；6B 架构标识+34B IP 声明"
+    },
+    {
+      "id": "metasploit",
+      "name": "Metasploit",
+      "category": "c2",
+      "open_source": true,
+      "integrated": true,
+      "article_id": 5,
+      "note": "渗透测试框架（C2 类）；meterpreter_reverse_https 已集成实时检测",
+      "fingerprint": "meterpreter https：同端点短 TLS 连接突发（10s 内 15+ 条）"
+    },
+    {
+      "id": "ligolo",
+      "name": "Ligolo-ng",
+      "category": "tunnel",
+      "open_source": true,
+      "integrated": true,
+      "article_id": 181,
+      "note": "TUN 隧道工具，TLS+yamux 双心跳，已集成检测",
+      "fingerprint": "TLS1.3 AES-128-GCM；双向 29B 心跳；30s/60s 周期；先下行后上行"
+    },
+    {
+      "id": "stowaway",
+      "name": "Stowaway",
+      "category": "tunnel",
+      "open_source": true,
+      "integrated": true,
+      "article_id": 203,
+      "note": "多级代理，AES-256-GCM，AuthToken 预认证，已集成实时检测",
+      "fingerprint": "非 TLS；16B AuthToken+16B 回显；36B 头+AES-256-GCM 帧"
+    },
+    {
+      "id": "frp",
+      "name": "frp",
+      "category": "tunnel",
+      "open_source": true,
+      "integrated": true,
+      "article_id": 20,
+      "note": "高性能反向代理，可开 TLS，已集成实时检测",
+      "fingerprint": "TLS 长连接；固定 30s 心跳（29B 小记录）"
+    },
+    {
+      "id": "gost",
+      "name": "Gost",
+      "category": "tunnel",
+      "open_source": true,
+      "integrated": true,
+      "article_id": 12,
+      "note": "Go Simple Tunnel（文章 id=12）；ws 中继隧道 + 周期性短流（模拟 beacon 中继），已集成实时检测",
+      "fingerprint": "ws 中继；同源同目标周期性短流（<1s）"
+    },
+    {
+      "id": "ngrok",
+      "name": "Ngrok",
+      "category": "tunnel",
+      "open_source": true,
+      "integrated": true,
+      "article_id": 117,
+      "note": "内网穿透（真实 arm64 agent + 本地 rendezvous，SNI 指纹已集成实时检测）",
+      "fingerprint": "TLS；固定 SNI connect.ngrok-agent.com；真实客户端指数退避重连（0.5/1/2/4s），每次一条 TLS 短流"
+    },
+    {
+      "id": "natpass",
+      "name": "natpass",
+      "category": "tunnel",
+      "open_source": true,
+      "integrated": true,
+      "article_id": 170,
+      "note": "轻量内网穿透，protobuf 握手，TLS 可选，已集成实时检测",
+      "fingerprint": "非 TLS；Protobuf 握手（~86B）；周期 keepalive"
+    },
+    {
+      "id": "suo5",
+      "name": "suo5",
+      "category": "tunnel",
+      "open_source": true,
+      "integrated": true,
+      "article_id": 162,
+      "note": "HTTP 隧道，v1.1+ 每次握手随机化 TLS 指纹，已集成实时检测",
+      "fingerprint": "每次握手 JA3/密码套件随机化；5s 心跳；二进制流 POST"
+    },
+    {
+      "id": "abptts",
+      "fingerprint": "非 TLS HTTP；每条连接一次 POST 到同一 JSP；随机 accessKey header + AES-CBC 参数（请求 500-800B/响应 280-600B 伪 System Status API）",
+      "name": "ABPTTS",
+      "category": "tunnel",
+      "open_source": true,
+      "integrated": true,
+      "article_id": 15,
+      "note": "HTTP 加密隧道工具（原版 Python2 客户端 + JSP 已集成检测）"
+    },
+    {
+      "id": "shadowtls",
+      "fingerprint": "TLS 伪装：小 ClientHello(~240B)+真实站点 ServerHello(~127B)+固定大小 app-data 记录；SNI 指向常见站点",
+      "name": "Shadow-TLS",
+      "category": "tunnel",
+      "open_source": true,
+      "integrated": true,
+      "article_id": 18,
+      "note": "伪装正常 TLS 的隐蔽通道（v0.2.25 已集成检测，需外网伪装目标）"
+    },
+    {
+      "id": "sish",
+      "fingerprint": "SSH 反向隧道长连接（非 TLS）；双向每 ~5s 28/52B 保活小包；转发端口动态绑定",
+      "name": "sish",
+      "category": "tunnel",
+      "open_source": true,
+      "integrated": true,
+      "article_id": 104,
+      "note": "SSH 隧道工具（v2.23 真实 server + ssh -R 已集成检测）"
+    },
+    {
+      "id": "rakshasa",
+      "fingerprint": "TCP 长连接；固定帧头（RAKS）+ 固定块大小；20s±15% 周期 keepalive",
+      "name": "Rakshasa",
+      "category": "tunnel",
+      "open_source": false,
+      "integrated": true,
+      "article_id": 163,
+      "note": "多级代理工具（闭源，协议驱动仿真已集成检测）"
+    },
+    {
+      "id": "remcos",
+      "fingerprint": "TCP 长连接；固定帧头魔数（REMC）+ 自定义 RC4/XOR 加密帧；12s±15% 周期心跳小包",
+      "name": "Remcos",
+      "category": "rat",
+      "open_source": false,
+      "integrated": true,
+      "article_id": 191,
+      "note": "商业远控（闭源，协议驱动仿真已集成检测）"
+    },
+    {
+      "id": "sparkrat",
+      "fingerprint": "HTTP 周期上线心跳（10s±20%）；固定 UA/URL（POST /spark/check）",
+      "name": "SparkRat",
+      "category": "rat",
+      "open_source": false,
+      "integrated": true,
+      "article_id": 188,
+      "note": "远控木马（闭源，协议驱动仿真已集成检测）"
+    },
+    {
+      "id": "ksrat",
+      "fingerprint": "HTTP POST 分钟级周期回连（实验室 20s±15%）；自定义加密载荷；固定 UA/URL（/ks/login）",
+      "name": "KSRAT",
+      "category": "rat",
+      "open_source": false,
+      "integrated": true,
+      "article_id": 158,
+      "note": "海莲花使用的远控木马（闭源，协议驱动仿真已集成检测）"
+    },
+    {
+      "id": "loki",
+      "fingerprint": "HTTP 周期回连短流（15s±20%）；加密载荷；POST /loki/status 心跳节奏",
+      "name": "Loki 远控",
+      "category": "rat",
+      "open_source": false,
+      "integrated": true,
+      "article_id": 196,
+      "note": "远控工具（闭源，协议驱动仿真已集成检测）"
+    },
+    {
+      "id": "zloader",
+      "fingerprint": "HTTPS 周期 C2 心跳（15s±20%）+ 模块下载；响应（800-1500B）显著大于请求；固定 SNI zloader-c2.local",
+      "name": "Zloader",
+      "category": "rat",
+      "open_source": false,
+      "integrated": true,
+      "article_id": 199,
+      "note": "银行木马家族（闭源，协议驱动仿真已集成检测）"
+    },
+    {
+      "id": "tristealer",
+      "fingerprint": "非 TLS HTTP POST 短突发；上行 2.5-4KB 显著大于下行（50-150B）；无固定心跳；突发后 20s 空窗",
+      "name": "TriStealer",
+      "category": "rat",
+      "open_source": false,
+      "integrated": true,
+      "article_id": 157,
+      "note": "窃密木马（闭源，协议驱动仿真已集成检测）"
+    },
+    {
+      "id": "rustystealer",
+      "fingerprint": "HTTPS POST 短突发；上行 3-5KB 显著大于下行；固定 SNI c2.rustystealer.local；加密二进制载荷",
+      "name": "RustyStealer",
+      "category": "rat",
+      "open_source": false,
+      "integrated": true,
+      "article_id": 180,
+      "note": "Ymir 勒索组织窃密木马（闭源，协议驱动仿真已集成检测）"
+    },
+    {
+      "id": "ktlvdoor",
+      "fingerprint": "TCP 长连接；固定帧头（KTLV）+ 自定义加密；15s±15% 周期心跳（150-350B）",
+      "name": "KTLVdoor",
+      "category": "rat",
+      "open_source": false,
+      "integrated": true,
+      "article_id": 204,
+      "note": "远控木马（闭源，协议驱动仿真已集成检测）"
+    },
+    {
+      "id": "wmrat",
+      "fingerprint": "HTTP POST 周期回连（12s±20%）；3DES 等自定义加密；固定 UA/URL（/wm/update）",
+      "name": "wmRAT",
+      "category": "rat",
+      "open_source": false,
+      "integrated": true,
+      "article_id": 126,
+      "note": "蔓灵花组织远控木马（闭源，协议驱动仿真已集成检测）"
+    },
+    {
+      "id": "badnews",
+      "fingerprint": "HTTP 分钟级周期回连（实验室 20s±15%）；加密载荷；固定 URL/UA（/news/check）",
+      "name": "BADNEWS",
+      "category": "rat",
+      "open_source": false,
+      "integrated": true,
+      "article_id": 138,
+      "note": "白象组织木马（闭源，协议驱动仿真已集成检测）"
+    },
+    {
+      "id": "perfspyrat",
+      "fingerprint": "HTTP 周期回连（10s±20%）；加密载荷；短流节奏固定（/perf/report）",
+      "name": "PerfSpyRAT",
+      "category": "rat",
+      "open_source": false,
+      "integrated": true,
+      "article_id": 173,
+      "note": "海莲花远控木马（闭源，协议驱动仿真已集成检测）"
+    },
+    {
+      "id": "fatalrat",
+      "fingerprint": "HTTP 短流周期回连（12s±15%）；心跳间隔稳定；POST /fatal/check",
+      "name": "FatalRAT",
+      "category": "rat",
+      "open_source": false,
+      "integrated": true,
+      "article_id": 7,
+      "note": "针对中国的远控木马（闭源，协议驱动仿真已集成检测）"
+    },
+    {
+      "id": "simayrat",
+      "fingerprint": "HTTPS 借道云端文档服务做 C2；固定 SNI docs.simayrat.local；GET /api/documents + 载荷伪装 JSON；15s±10% 固定轮询",
+      "name": "SiMayRAT",
+      "category": "rat",
+      "open_source": true,
+      "integrated": true,
+      "article_id": 28,
+      "note": "利用云文档 HTTPS 传输的远控（C# agent 仅 Windows，协议驱动仿真已集成检测）"
+    },
+    {
+      "id": "yinhu",
+      "fingerprint": "UDP 周期 48B 小包暗道（8s±20%）；HTTPS 回连双通道；加密载荷，流量规律性强",
+      "name": "银狐木马系列",
+      "category": "rat",
+      "open_source": false,
+      "integrated": true,
+      "article_id": 209,
+      "note": "活跃黑产木马（闭源，UDP 暗道协议驱动仿真已集成检测）"
+    },
+    {
+      "id": "manlinghua",
+      "fingerprint": "多阶段：投递期 HTTP 短流突发 + 驻留后 HTTPS 长连接 C2（12s±10%）；阶段切换流量突变",
+      "name": "蔓灵花武器库",
+      "category": "apt",
+      "open_source": false,
+      "integrated": true,
+      "article_id": 197,
+      "note": "蔓灵花组织多阶段攻击武器（闭源，多阶段协议驱动仿真已集成检测）"
+    },
+    {
+      "id": "oceanlotus",
+      "fingerprint": "HTTPS 远控周期回连；固定 SNI cdn.oceanlotus.local + 固定 UA（MSIE6）；自定义加密，请求>响应；实验室 20s±20% 周期",
+      "name": "海莲花武器",
+      "category": "apt",
+      "open_source": false,
+      "integrated": true,
+      "article_id": 175,
+      "note": "海莲花组织的投递与远控武器（闭源，协议驱动仿真已集成检测）"
+    },
+    {
+      "id": "sidewinder",
+      "fingerprint": "多阶段：投递期 HTTP 下载突发 + C2 HTTPS 周期短流（12s±10%）；加密载荷",
+      "name": "响尾蛇 SideWinder",
+      "category": "apt",
+      "open_source": false,
+      "integrated": true,
+      "article_id": 22,
+      "note": "响尾蛇 APT（闭源，多阶段协议驱动仿真已集成检测）"
+    },
+    {
+      "id": "transparenttribe",
+      "fingerprint": "HTTPS 借道 Telegram 风格 API；固定 SNI api.telegramtt.local；GET /bot<token>/getUpdates 短轮询 10s±10%；响应（消息文本）>请求",
+      "name": "摩诃草",
+      "category": "apt",
+      "open_source": false,
+      "integrated": true,
+      "article_id": 177,
+      "note": "摩诃草 APT 组织（闭源，协议驱动仿真已集成检测）"
+    },
+    {
+      "id": "aptc60",
+      "fingerprint": "借道云盘/网盘 HTTPS 加密 C2；周期轮询 20s±20%；固定 SNI pan.aptc60.local",
+      "name": "伪猎者 APT-C-60",
+      "category": "apt",
+      "open_source": false,
+      "integrated": true,
+      "article_id": 171,
+      "note": "伪猎者 APT-C-60（闭源，协议驱动仿真已集成检测）"
+    },
+    {
+      "id": "aptc68",
+      "fingerprint": "多阶段投递 + HTTPS 加密回连（15s±20%）；周期心跳；固定 SNI aptc68-c2.local",
+      "name": "寄生虫 APT-C-68",
+      "category": "apt",
+      "open_source": false,
+      "integrated": true,
+      "article_id": 167,
+      "note": "寄生虫 APT-C-68（闭源，协议驱动仿真已集成检测）"
+    },
+    {
+      "id": "hemao",
+      "fingerprint": "HTTPS 加密回连（15s±15%）；周期心跳；UA/URL 固定；固定 SNI hemao-c2.local",
+      "name": "黑猫团伙",
+      "category": "apt",
+      "open_source": false,
+      "integrated": true,
+      "article_id": 193,
+      "note": "黑猫团伙（闭源，协议驱动仿真已集成检测）"
+    },
+    {
+      "id": "lazarus",
+      "fingerprint": "HTTPS 加密 C2 回连（25s±30%）；beacon 周期+抖动；固定 SNI lazarus-c2.local",
+      "name": "Lazarus",
+      "category": "apt",
+      "open_source": false,
+      "integrated": true,
+      "article_id": 9,
+      "note": "Lazarus（闭源，协议驱动仿真已集成检测）"
+    },
+    {
+      "id": "apt29",
+      "fingerprint": "beacon 型 HTTPS 回连（20s±25%）；周期+抖动；载荷加密；固定 SNI apt29-c2.local",
+      "name": "APT29",
+      "category": "apt",
+      "open_source": false,
+      "integrated": true,
+      "article_id": 6,
+      "note": "APT29（闭源，协议驱动仿真已集成检测）"
+    },
+    {
+      "id": "oilrig",
+      "fingerprint": "PowerShell 后门 HTTP 周期回连（18s±20%）；加密载荷；POST /ps/run + DNS 隧道备用",
+      "name": "OilRig",
+      "category": "apt",
+      "open_source": false,
+      "integrated": true,
+      "article_id": 16,
+      "note": "OilRig（闭源，协议驱动仿真已集成检测）"
+    },
+    {
+      "id": "donot",
+      "fingerprint": "多阶段 HTTP(S) 通信；RC4 等加密载荷；URL/UA 随阶段变化；C2 HTTPS 14s±10%",
+      "name": "Donot",
+      "category": "apt",
+      "open_source": false,
+      "integrated": true,
+      "article_id": 11,
+      "note": "Donot（闭源，多阶段协议驱动仿真已集成检测）"
+    },
+    {
+      "id": "ghostwriter",
+      "fingerprint": "借道云存储 HTTPS 加密 C2；周期轮询 22s±20%；载荷伪装文件；固定 SNI drive.ghostwriter.local",
+      "name": "Ghostwriter",
+      "category": "apt",
+      "open_source": false,
+      "integrated": true,
+      "article_id": 29,
+      "note": "Ghostwriter（闭源，协议驱动仿真已集成检测）"
+    },
+    {
+      "id": "sliver",
+      "name": "Sliver",
+      "category": "c2",
+      "open_source": true,
+      "integrated": true,
+      "article_id": 140,
+      "note": "Go 编写 C2（github.com/BishopFox/sliver），mTLS beacon 默认 30s 检查，已集成实时检测",
+      "fingerprint": "mTLS 长连接；beacon ~30s±抖动"
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "name": "badnews",
+  "transport": "http",
+  "host": "127.0.0.1",
+  "port": 8089,
+  "method": "POST",
+  "path": "/news/check",
+  "params": [
+    [
+      "data",
+      "b64"
+    ]
+  ],
+  "headers": {
+    "User-Agent": "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1)"
+  },
+  "interval": 20,
+  "jitter": 0.15,
+  "req_size": [
+    400,
+    800
+  ],
+  "resp_size": [
+    200,
+    400
+  ],
+  "keep_alive": false,
+  "duration": 85,
+  "note": "白象组织木马（闭源，HTTP 分钟级周期回连，固定 URL/UA，实验室 20s，协议驱动仿真）"
+}

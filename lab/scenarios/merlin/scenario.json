@@ -1,0 +1,15 @@
+{
+  "name": "merlin",
+  "description": "Merlin C2 v2（JWE 加密，agent 默认 30s 轮询，HTTP/2）",
+  "image": "behinder-lab",
+  "duration": 110,
+  "capture_filter": "tcp port 50051",
+  "probe_args": "-json -ja3=false -idle 15 -scenario merlin -debug",
+  "expected": [
+    {
+      "event": "merlin.polling",
+      "min_count": 1
+    }
+  ],
+  "negative": false
+}

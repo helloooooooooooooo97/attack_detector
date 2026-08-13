@@ -1,0 +1,17 @@
+{
+  "name": "nimplant",
+  "transport": "https",
+  "host": "nimplant-c2.local",
+  "port": 8445,
+  "method": "POST",
+  "path": "/api/init",
+  "params": [["data", "b64"]],
+  "headers": {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36"},
+  "interval": 15.0,
+  "jitter": 0.2,
+  "req_size": [500, 900],
+  "resp_size": [200, 400],
+  "keep_alive": false,
+  "duration": 60,
+  "note": "NimPlant v2：Windows .NET 植入体（Linux 容器不可运行），HTTP(S) beacon 短流，真实默认 60s±抖动，实验室 15s"
+}

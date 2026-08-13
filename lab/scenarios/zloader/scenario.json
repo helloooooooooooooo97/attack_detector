@@ -1,0 +1,15 @@
+{
+  "name": "zloader",
+  "description": "银行木马家族（rat，协议驱动仿真）",
+  "image": "behinder-lab",
+  "duration": 82,
+  "capture_filter": "tcp port 8462",
+  "probe_args": "-json -ja3=false -idle 15 -scenario zloader -debug",
+  "expected": [
+    {
+      "event": "zloader.beacon",
+      "min_count": 2
+    }
+  ],
+  "negative": false
+}

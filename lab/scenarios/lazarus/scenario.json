@@ -1,0 +1,15 @@
+{
+  "name": "lazarus",
+  "description": "Lazarus（apt，协议驱动仿真）",
+  "image": "behinder-lab",
+  "duration": 112,
+  "capture_filter": "tcp port 8467",
+  "probe_args": "-json -ja3=false -idle 15 -scenario lazarus -debug",
+  "expected": [
+    {
+      "event": "lazarus.beacon",
+      "min_count": 2
+    }
+  ],
+  "negative": false
+}

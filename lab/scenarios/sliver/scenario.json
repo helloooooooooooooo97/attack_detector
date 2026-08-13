@@ -1,0 +1,15 @@
+{
+  "name": "sliver",
+  "description": "Sliver C2 v1.7（mTLS beacon，默认 30s 检查间隔 + 抖动）",
+  "image": "behinder-lab",
+  "duration": 420,
+  "capture_filter": "tcp port 8888",
+  "probe_args": "-json -ja3=false -idle 20 -scenario sliver -debug",
+  "expected": [
+    {
+      "event": "sliver.beacon",
+      "min_count": 1
+    }
+  ],
+  "negative": false
+}

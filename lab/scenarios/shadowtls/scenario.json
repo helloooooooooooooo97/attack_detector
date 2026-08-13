@@ -1,0 +1,15 @@
+{
+  "name": "shadowtls",
+  "description": "shadow-tls v0.2.25（真实 server+client，github.com 作为伪装 TLS 目标；本地 TLS 栈与拼接不兼容，需外网）",
+  "image": "behinder-lab",
+  "duration": 80,
+  "capture_filter": "tcp port 8444",
+  "probe_args": "-json -ja3=false -idle 15 -scenario shadowtls -debug",
+  "expected": [
+    {
+      "event": "shadowtls.camouflage",
+      "min_count": 2
+    }
+  ],
+  "negative": false
+}

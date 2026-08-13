@@ -1,0 +1,30 @@
+{
+  "name": "ghostwriter",
+  "transport": "https",
+  "host": "drive.ghostwriter.local",
+  "port": 8470,
+  "method": "POST",
+  "path": "/files",
+  "params": [
+    [
+      "data",
+      "b64"
+    ]
+  ],
+  "headers": {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+  },
+  "interval": 22,
+  "jitter": 0.2,
+  "req_size": [
+    400,
+    800
+  ],
+  "resp_size": [
+    500,
+    1000
+  ],
+  "keep_alive": false,
+  "duration": 91,
+  "note": "Ghostwriter（闭源，借道云存储 HTTPS 加密 C2，周期轮询，载荷伪装文件，协议驱动仿真）"
+}

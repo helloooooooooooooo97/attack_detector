@@ -1,0 +1,10 @@
+{
+  "description": "badnews 金标准（rat 类）",
+  "events": [
+    {
+      "event": "badnews.beacon",
+      "min_count": 2
+    }
+  ],
+  "features_note": "白象组织木马（闭源，HTTP 分钟级周期回连，固定 URL/UA，实验室 20s，协议驱动仿真）"
+}

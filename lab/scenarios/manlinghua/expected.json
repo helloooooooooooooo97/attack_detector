@@ -1,0 +1,11 @@
+{
+  "description": "manlinghua 金标准",
+  "events": [
+    {
+      "event": "manlinghua.c2_phase",
+      "min_count": 1
+    }
+  ],
+  "features_note": "多阶段：投递期 HTTP 短流突发 + 驻留后 HTTPS 长连接 C2（12s±10%）；阶段切换流量突变",
+  "expected": null
+}

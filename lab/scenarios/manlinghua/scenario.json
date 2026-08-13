@@ -1,0 +1,15 @@
+{
+  "image": "behinder-lab",
+  "probe_args": "-json -ja3=false -idle 15 -scenario manlinghua -debug",
+  "expected": [
+    {
+      "event": "manlinghua.c2_phase",
+      "min_count": 1
+    }
+  ],
+  "negative": false,
+  "name": "manlinghua",
+  "description": "蔓灵花武器库（闭源，协议驱动仿真）：投递期 HTTP 突发 → 驻留后 HTTPS 长连接 C2，阶段切换突变",
+  "duration": 90,
+  "capture_filter": "tcp port 8083 or tcp port 8456"
+}

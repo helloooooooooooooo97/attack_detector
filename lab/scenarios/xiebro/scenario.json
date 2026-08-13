@@ -1,0 +1,15 @@
+{
+  "name": "xiebro",
+  "description": "XiebroC2 Linux TCP client（真实 client，AES-128-ECB + 15s ClientPing）",
+  "image": "behinder-lab",
+  "duration": 100,
+  "capture_filter": "tcp port 13000",
+  "probe_args": "-json -ja3=false -idle 15 -scenario xiebro -debug",
+  "expected": [
+    {
+      "event": "xiebro.heartbeat",
+      "min_count": 1
+    }
+  ],
+  "negative": false
+}

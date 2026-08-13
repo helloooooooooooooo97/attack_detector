@@ -1,0 +1,7 @@
+{
+  "description": "Ngrok 金标准（文章 id=117，隧道类）",
+  "events": [
+    {"event": "ngrok.agent_tls", "min_count": 3}
+  ],
+  "features_note": "TLS1.3；固定 SNI connect.ngrok-agent.com；真实 ngrok 客户端指数退避重连（0.5/1/2/4s），每次连接一条 TLS 短流"
+}

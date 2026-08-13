@@ -1,0 +1,861 @@
+{
+  "charts": {
+    "behinder": [
+      "records_per_flow",
+      "req_size_hist",
+      "timeline"
+    ],
+    "ligolo": [
+      "heartbeat_scatter",
+      "size_hist"
+    ],
+    "normal": [
+      "size_hist",
+      "req_resp"
+    ],
+    "suo5": [
+      "scatter"
+    ],
+    "merlin": [
+      "scatter"
+    ],
+    "stowaway": [
+      "scatter"
+    ],
+    "natpass": [
+      "scatter"
+    ],
+    "frp": [
+      "scatter"
+    ],
+    "sliver": [
+      "scatter"
+    ],
+    "gost": [
+      "scatter"
+    ],
+    "platypus": [
+      "scatter"
+    ],
+    "metasploit": [
+      "scatter"
+    ],
+    "weevely": [
+      "scatter"
+    ],
+    "deimos": [
+      "scatter"
+    ],
+    "xiebro": [
+      "scatter"
+    ],
+    "godzilla": [
+      "scatter"
+    ],
+    "sish": [
+      "scatter"
+    ],
+    "shadowtls": [
+      "scatter"
+    ],
+    "abptts": [
+      "scatter"
+    ],
+    "antsword": [
+      "scatter"
+    ],
+    "covenant": [
+      "scatter"
+    ],
+    "mythic": [
+      "scatter"
+    ],
+    "cobaltstrike": [
+      "scatter"
+    ],
+    "chopper": [
+      "scatter"
+    ],
+    "ngrok": [
+      "scatter"
+    ],
+    "nimplant": [
+      "scatter"
+    ],
+    "bruteratel": [
+      "scatter"
+    ],
+    "adaptix": [
+      "scatter"
+    ],
+    "simayrat": [
+      "scatter"
+    ],
+    "oceanlotus": [
+      "scatter"
+    ],
+    "transparenttribe": [
+      "scatter"
+    ],
+    "silenttrinity": [
+      "scatter"
+    ],
+    "tristealer": [
+      "scatter"
+    ],
+    "rustystealer": [
+      "scatter"
+    ],
+    "remcos": [
+      "scatter"
+    ],
+    "ktlvdoor": [
+      "scatter"
+    ],
+    "rakshasa": [
+      "scatter"
+    ],
+    "manlinghua": [
+      "scatter"
+    ],
+    "vshell": [
+      "scatter"
+    ],
+    "vagent": [
+      "scatter"
+    ],
+    "evilox": [
+      "scatter"
+    ],
+    "octopus": [
+      "scatter"
+    ],
+    "sparkrat": [
+      "scatter"
+    ],
+    "ksrat": [
+      "scatter"
+    ],
+    "loki": [
+      "scatter"
+    ],
+    "zloader": [
+      "scatter"
+    ],
+    "wmrat": [
+      "scatter"
+    ],
+    "badnews": [
+      "scatter"
+    ],
+    "perfspyrat": [
+      "scatter"
+    ],
+    "fatalrat": [
+      "scatter"
+    ],
+    "sidewinder": [
+      "scatter"
+    ],
+    "aptc60": [
+      "scatter"
+    ],
+    "aptc68": [
+      "scatter"
+    ],
+    "hemao": [
+      "scatter"
+    ],
+    "lazarus": [
+      "scatter"
+    ],
+    "apt29": [
+      "scatter"
+    ],
+    "oilrig": [
+      "scatter"
+    ],
+    "donot": [
+      "scatter"
+    ],
+    "ghostwriter": [
+      "scatter"
+    ]
+  },
+  "stats": {
+    "suo5": {
+      "flows": 11,
+      "small": []
+    },
+    "merlin": {
+      "duration": 60.0,
+      "appdata": 19,
+      "small": [
+        [
+          31.5,
+          "C",
+          336
+        ],
+        [
+          31.5,
+          "S",
+          73
+        ],
+        [
+          31.5,
+          "C",
+          34
+        ],
+        [
+          60.0,
+          "S",
+          19
+        ]
+      ]
+    },
+    "stowaway": {
+      "duration": 30.0,
+      "appdata": 0,
+      "small": []
+    },
+    "natpass": {
+      "duration": 30.0,
+      "appdata": 0,
+      "small": []
+    },
+    "frp": {
+      "duration": 64.9,
+      "appdata": 33,
+      "small": [
+        [
+          30.0,
+          "C",
+          29
+        ],
+        [
+          30.0,
+          "S",
+          29
+        ],
+        [
+          30.0,
+          "S",
+          29
+        ],
+        [
+          30.0,
+          "C",
+          29
+        ],
+        [
+          60.0,
+          "C",
+          29
+        ],
+        [
+          60.0,
+          "S",
+          29
+        ],
+        [
+          60.0,
+          "S",
+          29
+        ],
+        [
+          60.0,
+          "C",
+          29
+        ]
+      ]
+    },
+    "sliver": {
+      "duration": 70.0,
+      "appdata": 27,
+      "small": [
+        [
+          30.0,
+          "C",
+          29
+        ],
+        [
+          30.0,
+          "S",
+          29
+        ],
+        [
+          30.0,
+          "S",
+          29
+        ],
+        [
+          30.0,
+          "C",
+          29
+        ],
+        [
+          60.0,
+          "C",
+          29
+        ],
+        [
+          60.0,
+          "S",
+          29
+        ],
+        [
+          60.0,
+          "S",
+          29
+        ],
+        [
+          60.0,
+          "C",
+          29
+        ]
+      ]
+    },
+    "gost": {
+      "flows": 7,
+      "small": []
+    },
+    "platypus": {
+      "duration": 43.7,
+      "appdata": 12,
+      "small": [
+        [
+          43.7,
+          "S",
+          19
+        ],
+        [
+          43.7,
+          "C",
+          19
+        ]
+      ]
+    },
+    "metasploit": {
+      "flows": 118,
+      "small": []
+    },
+    "weevely": {
+      "flows": 12,
+      "small": []
+    },
+    "deimos": {
+      "duration": 75.0,
+      "appdata": 0,
+      "small": []
+    },
+    "xiebro": {
+      "duration": 75.0,
+      "appdata": 0,
+      "small": []
+    },
+    "godzilla": {
+      "flows": 3,
+      "small": []
+    },
+    "sish": {
+      "duration": 30.6,
+      "appdata": 0,
+      "small": []
+    },
+    "shadowtls": {
+      "duration": 5.0,
+      "appdata": 0,
+      "small": []
+    },
+    "abptts": {
+      "flows": 27,
+      "small": []
+    },
+    "antsword": {
+      "flows": 5,
+      "small": []
+    },
+    "covenant": {
+      "duration": 28.6,
+      "appdata": 0,
+      "small": []
+    },
+    "mythic": {
+      "duration": 59.7,
+      "appdata": 0,
+      "small": []
+    },
+    "cobaltstrike": {
+      "flows": 15,
+      "small": []
+    },
+    "chopper": {
+      "flows": 10,
+      "small": []
+    },
+    "ngrok": {
+      "flows": 6,
+      "small": []
+    },
+    "nimplant": {
+      "flows": 4,
+      "small": []
+    },
+    "bruteratel": {
+      "flows": 5,
+      "small": []
+    },
+    "adaptix": {
+      "flows": 8,
+      "small": []
+    },
+    "simayrat": {
+      "flows": 5,
+      "small": []
+    },
+    "oceanlotus": {
+      "flows": 5,
+      "small": []
+    },
+    "transparenttribe": {
+      "flows": 7,
+      "small": []
+    },
+    "silenttrinity": {
+      "duration": 76.9,
+      "appdata": 40,
+      "small": [
+        [
+          9.3,
+          "C",
+          192
+        ],
+        [
+          9.3,
+          "S",
+          170
+        ],
+        [
+          19.3,
+          "C",
+          192
+        ],
+        [
+          19.3,
+          "S",
+          170
+        ],
+        [
+          19.3,
+          "S",
+          260
+        ],
+        [
+          28.3,
+          "C",
+          192
+        ],
+        [
+          28.3,
+          "S",
+          170
+        ],
+        [
+          37.8,
+          "C",
+          192
+        ],
+        [
+          37.8,
+          "S",
+          170
+        ],
+        [
+          37.8,
+          "S",
+          217
+        ],
+        [
+          47.6,
+          "C",
+          192
+        ],
+        [
+          47.6,
+          "S",
+          170
+        ],
+        [
+          58.1,
+          "C",
+          192
+        ],
+        [
+          58.1,
+          "S",
+          170
+        ],
+        [
+          58.1,
+          "S",
+          257
+        ],
+        [
+          67.5,
+          "C",
+          192
+        ],
+        [
+          67.5,
+          "S",
+          170
+        ],
+        [
+          76.9,
+          "S",
+          19
+        ]
+      ]
+    },
+    "tristealer": {
+      "flows": 15,
+      "small": []
+    },
+    "rustystealer": {
+      "flows": 12,
+      "small": []
+    },
+    "remcos": {
+      "duration": 74.7,
+      "appdata": 0,
+      "small": []
+    },
+    "ktlvdoor": {
+      "duration": 75.3,
+      "appdata": 0,
+      "small": []
+    },
+    "rakshasa": {
+      "duration": 81.0,
+      "appdata": 0,
+      "small": []
+    },
+    "manlinghua": {
+      "duration": 54.8,
+      "appdata": 28,
+      "small": [
+        [
+          12.3,
+          "C",
+          159
+        ],
+        [
+          12.3,
+          "S",
+          170
+        ],
+        [
+          23.5,
+          "C",
+          159
+        ],
+        [
+          23.5,
+          "S",
+          170
+        ],
+        [
+          36.2,
+          "C",
+          159
+        ],
+        [
+          36.2,
+          "S",
+          170
+        ],
+        [
+          47.6,
+          "C",
+          159
+        ],
+        [
+          47.6,
+          "S",
+          170
+        ],
+        [
+          54.8,
+          "S",
+          19
+        ]
+      ]
+    },
+    "vshell": {
+      "duration": 70.8,
+      "appdata": 0,
+      "small": []
+    },
+    "vagent": {
+      "duration": 89.9,
+      "appdata": 32,
+      "small": [
+        [
+          16.3,
+          "C",
+          203
+        ],
+        [
+          16.3,
+          "S",
+          170
+        ],
+        [
+          16.3,
+          "S",
+          322
+        ],
+        [
+          30.1,
+          "C",
+          203
+        ],
+        [
+          30.1,
+          "S",
+          170
+        ],
+        [
+          43.9,
+          "C",
+          203
+        ],
+        [
+          43.9,
+          "S",
+          170
+        ],
+        [
+          57.5,
+          "C",
+          203
+        ],
+        [
+          57.5,
+          "S",
+          170
+        ],
+        [
+          74.5,
+          "C",
+          203
+        ],
+        [
+          74.5,
+          "S",
+          170
+        ],
+        [
+          89.9,
+          "S",
+          19
+        ]
+      ]
+    },
+    "evilox": {
+      "flows": 5,
+      "small": []
+    },
+    "octopus": {
+      "flows": 5,
+      "small": []
+    },
+    "sparkrat": {
+      "flows": 6,
+      "small": []
+    },
+    "ksrat": {
+      "flows": 5,
+      "small": []
+    },
+    "loki": {
+      "flows": 5,
+      "small": []
+    },
+    "zloader": {
+      "flows": 5,
+      "small": []
+    },
+    "wmrat": {
+      "flows": 6,
+      "small": []
+    },
+    "badnews": {
+      "flows": 5,
+      "small": []
+    },
+    "perfspyrat": {
+      "flows": 6,
+      "small": []
+    },
+    "fatalrat": {
+      "flows": 6,
+      "small": []
+    },
+    "sidewinder": {
+      "duration": 56.2,
+      "appdata": 28,
+      "small": [
+        [
+          12.2,
+          "C",
+          197
+        ],
+        [
+          12.2,
+          "S",
+          170
+        ],
+        [
+          12.2,
+          "S",
+          248
+        ],
+        [
+          25.0,
+          "C",
+          197
+        ],
+        [
+          25.0,
+          "S",
+          170
+        ],
+        [
+          25.0,
+          "S",
+          375
+        ],
+        [
+          37.9,
+          "C",
+          197
+        ],
+        [
+          37.9,
+          "S",
+          170
+        ],
+        [
+          37.9,
+          "S",
+          372
+        ],
+        [
+          49.0,
+          "C",
+          197
+        ],
+        [
+          49.0,
+          "S",
+          170
+        ],
+        [
+          56.2,
+          "S",
+          19
+        ]
+      ]
+    },
+    "aptc60": {
+      "flows": 5,
+      "small": []
+    },
+    "aptc68": {
+      "flows": 5,
+      "small": []
+    },
+    "hemao": {
+      "flows": 5,
+      "small": []
+    },
+    "lazarus": {
+      "flows": 4,
+      "small": []
+    },
+    "apt29": {
+      "flows": 5,
+      "small": []
+    },
+    "oilrig": {
+      "flows": 5,
+      "small": []
+    },
+    "donot": {
+      "duration": 59.8,
+      "appdata": 28,
+      "small": [
+        [
+          14.3,
+          "C",
+          192
+        ],
+        [
+          14.3,
+          "S",
+          170
+        ],
+        [
+          14.3,
+          "S",
+          306
+        ],
+        [
+          27.1,
+          "C",
+          192
+        ],
+        [
+          27.1,
+          "S",
+          170
+        ],
+        [
+          27.1,
+          "S",
+          335
+        ],
+        [
+          41.0,
+          "C",
+          192
+        ],
+        [
+          41.0,
+          "S",
+          170
+        ],
+        [
+          54.6,
+          "C",
+          192
+        ],
+        [
+          54.6,
+          "S",
+          170
+        ],
+        [
+          59.8,
+          "S",
+          19
+        ]
+      ]
+    },
+    "ghostwriter": {
+      "flows": 5,
+      "small": []
+    }
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "description": "Covenant 金标准（文章 id=133，C2 类）",
+  "events": [
+    {"event": "covenant.http_profile", "min_count": 2}
+  ],
+  "features_note": "非 TLS HTTP；POST 到 profile URL（/en-us/*.html）；body i=<32hex>&data=<base64 JSON>（GUID/Type/IV/EncryptedMessage/HMAC）；ASPSESSIONID cookie；固定 UA（Chrome 41）；周期 check-in"
+}

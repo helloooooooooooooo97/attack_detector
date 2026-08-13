@@ -1,0 +1,7 @@
+{
+  "description": "AntSword 蚁剑 金标准（文章 id=1，WebShell 类）",
+  "events": [
+    {"event": "antsword.php_flow", "min_count": 2}
+  ],
+  "features_note": "非 TLS HTTP；每操作一条短连接 POST：pwd=@eval(@base64_decode($_POST[rand])) + 随机参数=1.8KB base64 代码；响应=随机 hex tag+明文输出；操作间隔 1-5s"
+}

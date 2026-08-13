@@ -1,0 +1,17 @@
+{
+  "name": "simayrat",
+  "transport": "https",
+  "host": "docs.simayrat.local",
+  "port": 8447,
+  "method": "GET",
+  "path": "/api/documents",
+  "params": [["doc", "b64"]],
+  "headers": {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/119.0 Safari/537.36"},
+  "interval": 15.0,
+  "jitter": 0.1,
+  "req_size": [300, 600],
+  "resp_size": [500, 900],
+  "keep_alive": false,
+  "duration": 60,
+  "note": "SiMayRAT：HTTPS 借道云端文档服务做 C2，载荷伪装文档/JSON，固定周期轮询（agent 仅 Windows，协议驱动）"
+}

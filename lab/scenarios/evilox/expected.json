@@ -1,0 +1,10 @@
+{
+  "description": "evilox 金标准（c2 类）",
+  "events": [
+    {
+      "event": "evilox.checkin",
+      "min_count": 2
+    }
+  ],
+  "features_note": "macOS 后渗透框架（agent 仅 macOS，HTTPS 周期 checkin + JXA 载荷，UA 伪装 Mac 浏览器，协议驱动仿真）"
+}

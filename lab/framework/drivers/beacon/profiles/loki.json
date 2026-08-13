@@ -1,0 +1,30 @@
+{
+  "name": "loki",
+  "transport": "http",
+  "host": "127.0.0.1",
+  "port": 8087,
+  "method": "POST",
+  "path": "/loki/status",
+  "params": [
+    [
+      "data",
+      "b64"
+    ]
+  ],
+  "headers": {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+  },
+  "interval": 15,
+  "jitter": 0.2,
+  "req_size": [
+    300,
+    700
+  ],
+  "resp_size": [
+    200,
+    500
+  ],
+  "keep_alive": false,
+  "duration": 70,
+  "note": "远控工具（闭源，HTTP 周期回连短流 + 心跳节奏，协议驱动仿真）"
+}

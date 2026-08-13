@@ -1,0 +1,83 @@
+{
+  "name": "sidewinder",
+  "transport": "http",
+  "host": "127.0.0.1",
+  "port": 8092,
+  "method": "POST",
+  "path": "/c2",
+  "params": [
+    [
+      "data",
+      "b64"
+    ]
+  ],
+  "headers": {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+  },
+  "interval": 12,
+  "jitter": 0.1,
+  "req_size": [
+    400,
+    700
+  ],
+  "resp_size": [
+    300,
+    600
+  ],
+  "keep_alive": false,
+  "duration": 80,
+  "note": "响尾蛇 APT（闭源，投递期 HTTP 下载突发 + C2 HTTPS 周期短流，多阶段协议驱动仿真）",
+  "mode": "multiphase",
+  "phases": [
+    {
+      "phase": "delivery",
+      "mode": "burst",
+      "transport": "http",
+      "port": 8092,
+      "path": "/drop",
+      "params": [
+        [
+          "p",
+          "b64"
+        ]
+      ],
+      "burst_n": 4,
+      "burst_gap": 0.5,
+      "idle_gap": 8.0,
+      "req_size": [
+        700,
+        1400
+      ],
+      "resp_size": [
+        100,
+        300
+      ],
+      "duration": 25
+    },
+    {
+      "phase": "c2",
+      "transport": "https",
+      "host": "sidewinder-c2.local",
+      "port": 8463,
+      "path": "/c2",
+      "params": [
+        [
+          "e",
+          "b64"
+        ]
+      ],
+      "interval": 12,
+      "jitter": 0.1,
+      "req_size": [
+        400,
+        700
+      ],
+      "resp_size": [
+        300,
+        600
+      ],
+      "keep_alive": true,
+      "duration": 55
+    }
+  ]
+}

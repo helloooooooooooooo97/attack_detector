@@ -1,0 +1,7 @@
+{
+  "description": "DeimosC2 金标准（文章 id=8，C2 类）",
+  "events": [
+    {"event": "deimos.checkin", "min_count": 3}
+  ],
+  "features_note": "非 TLS TCP；首包 = 8B 长度 + 256B RSA-OAEP + AES-CBC（C→S 296B check-in / 568B init，S→C 40B/72B）；15s 周期短连接"
+}

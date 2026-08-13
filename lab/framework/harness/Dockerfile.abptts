@@ -1,0 +1,16 @@
+# ABPTTS scenario image: behinder-lab + Python 2.7 runtime with the
+# pycrypto/httplib2 deps needed by the original ABPTTS client.
+FROM python:2.7 AS py2
+RUN pip install pycrypto==2.6.1 httplib2==0.22.0
+
+FROM behinder-lab
+COPY --from=py2 /usr/local/bin/python2.7 /usr/local/bin/python2.7
+COPY --from=py2 /usr/local/lib/python2.7 /usr/local/lib/python2.7
+COPY --from=py2 /usr/local/lib/libpython2.7.so.1.0 /usr/local/lib/
+COPY --from=py2 /usr/local/bin/python /usr/local/bin/python2
+# python:2.7 is Debian stretch with OpenSSL 1.1; ship the old libs because
+# the behinder-lab base (Ubuntu 22.04) only has OpenSSL 3.
+COPY --from=py2 /usr/lib/aarch64-linux-gnu/libssl.so.1.1 /usr/lib/aarch64-linux-gnu/
+COPY --from=py2 /usr/lib/aarch64-linux-gnu/libcrypto.so.1.1 /usr/lib/aarch64-linux-gnu/
+RUN ldconfig
+ENV PATH=/usr/local/bin:$PATH

@@ -1,0 +1,10 @@
+{
+  "description": "aptc60 金标准（apt 类）",
+  "events": [
+    {
+      "event": "aptc60.poll",
+      "min_count": 2
+    }
+  ],
+  "features_note": "伪猎者 APT-C-60（闭源，借道云盘/网盘 HTTPS 加密 C2，周期轮询，协议驱动仿真）"
+}

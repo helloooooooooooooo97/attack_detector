@@ -1,0 +1,5 @@
+{
+  "description": "正常 HTTPS GET 流量：任何规则都不得告警",
+  "events": [],
+  "negative": true
+}

@@ -1,0 +1,7 @@
+{
+  "description": "Platypus v1.5.1 金标准（文章 id=174）",
+  "events": [
+    {"event": "platypus.link", "min_count": 1}
+  ],
+  "features_note": "TLS 长连接（agent 直连 ingress）；注册后周期 RPC 小交换（sys_info/keepalive）"
+}

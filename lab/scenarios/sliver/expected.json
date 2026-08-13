@@ -1,0 +1,7 @@
+{
+  "description": "Sliver mTLS beacon 金标准（观成文章 id=116/140 同类 C2）",
+  "events": [
+    {"event": "sliver.beacon", "min_count": 1}
+  ],
+  "features_note": "mTLS 长连接 + 周期 beacon（默认 30s ± 抖动）"
+}

@@ -1,0 +1,17 @@
+{
+  "name": "adaptix",
+  "transport": "http",
+  "host": "127.0.0.1",
+  "port": 8081,
+  "method": "POST",
+  "path": "/checkin",
+  "params": [["v", "b64"]],
+  "headers": {"User-Agent": "Mozilla/5.0 (Windows NT 6.1; Win64; x64)"},
+  "interval": 8.0,
+  "jitter": 0.2,
+  "req_size": [300, 600],
+  "resp_size": [200, 500],
+  "keep_alive": false,
+  "duration": 60,
+  "note": "AdaptixC2 BeaconHTTP：RC4 加密载荷，HTTP 单端点短流，周期 checkin（服务端已真实验证，agent 仅 Windows，此处协议驱动）"
+}

@@ -1,0 +1,7 @@
+{
+  "description": "Merlin C2 金标准（文章 id=140）",
+  "events": [
+    {"event": "merlin.polling", "min_count": 1}
+  ],
+  "features_note": "长连接 + 周期小交换（agent 默认 sleep 30s ±3s），JWE 加密载荷"
+}

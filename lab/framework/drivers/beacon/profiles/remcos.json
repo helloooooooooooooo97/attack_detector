@@ -1,0 +1,13 @@
+{
+  "name": "remcos",
+  "transport": "tcp",
+  "host": "127.0.0.1",
+  "port": 8452,
+  "mode": "tcp_stream",
+  "frame": {"header_len": 8, "magic": "52454D43"},
+  "interval": 12.0,
+  "jitter": 0.15,
+  "req_size": [100, 260],
+  "duration": 70,
+  "note": "Remcos：商业远控，TCP 长连接回连，自定义 RC4/XOR 加密帧，周期心跳小包，固定帧头魔数（闭源，协议驱动）"
+}

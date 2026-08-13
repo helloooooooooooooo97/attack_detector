@@ -1,0 +1,15 @@
+{
+  "image": "behinder-lab",
+  "probe_args": "-json -ja3=false -idle 15 -scenario remcos -debug",
+  "expected": [
+    {
+      "event": "remcos.heartbeat",
+      "min_count": 1
+    }
+  ],
+  "negative": false,
+  "name": "remcos",
+  "description": "Remcos（闭源，协议驱动仿真）：TCP 长连接 + 固定魔数帧 + 12s±15% 周期心跳小包",
+  "duration": 85,
+  "capture_filter": "tcp port 8452"
+}

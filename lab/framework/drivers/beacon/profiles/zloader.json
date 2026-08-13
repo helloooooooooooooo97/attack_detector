@@ -1,0 +1,30 @@
+{
+  "name": "zloader",
+  "transport": "https",
+  "host": "zloader-c2.local",
+  "port": 8462,
+  "method": "POST",
+  "path": "/api/module",
+  "params": [
+    [
+      "data",
+      "b64"
+    ]
+  ],
+  "headers": {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+  },
+  "interval": 15,
+  "jitter": 0.2,
+  "req_size": [
+    400,
+    700
+  ],
+  "resp_size": [
+    800,
+    1500
+  ],
+  "keep_alive": false,
+  "duration": 70,
+  "note": "银行木马家族（闭源，HTTPS 周期 C2 心跳 + 模块下载，响应显著大于请求，协议驱动仿真）"
+}

@@ -1,0 +1,10 @@
+{
+  "description": "lazarus 金标准（apt 类）",
+  "events": [
+    {
+      "event": "lazarus.beacon",
+      "min_count": 2
+    }
+  ],
+  "features_note": "Lazarus（闭源，木马化软件投递 + HTTPS 加密 C2 回连，beacon 周期+抖动，协议驱动仿真）"
+}

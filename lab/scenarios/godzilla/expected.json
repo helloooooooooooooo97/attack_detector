@@ -1,0 +1,7 @@
+{
+  "description": "Godzilla 金标准（文章 id=149，WebShell 类）",
+  "events": [
+    {"event": "godzilla.php_flow", "min_count": 2}
+  ],
+  "features_note": "非 TLS HTTP；每操作一条短连接：首条 53KB payload 上传（payload.php→会话），后续 406B XOR+base64 POST → 1.1-1.5KB 响应，md5(pass+key) 包裹；操作间隔 1-5s 人操作节奏"
+}

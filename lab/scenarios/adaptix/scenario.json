@@ -1,0 +1,12 @@
+{
+  "name": "adaptix",
+  "description": "AdaptixC2 BeaconHTTP（服务端已真实验证，agent 仅 Windows，协议驱动仿真）：HTTP 单端点 POST /checkin，RC4 加密载荷，8s±20% checkin",
+  "image": "behinder-lab",
+  "duration": 70,
+  "capture_filter": "tcp port 8081",
+  "probe_args": "-json -ja3=false -idle 15 -scenario adaptix -debug",
+  "expected": [
+    {"event": "adaptix.checkin", "min_count": 2}
+  ],
+  "negative": false
+}

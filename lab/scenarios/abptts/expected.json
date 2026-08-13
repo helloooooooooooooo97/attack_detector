@@ -1,0 +1,7 @@
+{
+  "description": "ABPTTS 金标准（文章 id=15，隧道类）",
+  "events": [
+    {"event": "abptts.tunnel_post", "min_count": 4}
+  ],
+  "features_note": "非 TLS HTTP；每条连接一次 POST（Connection: close）到同一 JSP；随机 accessKey header + AES-CBC 参数（请求 500-800B，响应 280-600B 伪 System Status API HTML）；连续多条短流"
+}

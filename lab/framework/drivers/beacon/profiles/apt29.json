@@ -1,0 +1,30 @@
+{
+  "name": "apt29",
+  "transport": "https",
+  "host": "apt29-c2.local",
+  "port": 8468,
+  "method": "POST",
+  "path": "/load",
+  "params": [
+    [
+      "data",
+      "b64"
+    ]
+  ],
+  "headers": {
+    "User-Agent": "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1)"
+  },
+  "interval": 20,
+  "jitter": 0.25,
+  "req_size": [
+    500,
+    900
+  ],
+  "resp_size": [
+    300,
+    700
+  ],
+  "keep_alive": false,
+  "duration": 85,
+  "note": "APT29（闭源，beacon 型 HTTPS 回连，周期+抖动，载荷加密，协议驱动仿真）"
+}

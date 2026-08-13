@@ -1,0 +1,10 @@
+{
+  "description": "gost 金标准（文章 id=12）",
+  "events": [
+    {
+      "event": "gost.tunnel_relay",
+      "min_count": 1
+    }
+  ],
+  "features_note": "ws 中继：每个请求一条短流，同源同目标周期性出现（~8s）"
+}

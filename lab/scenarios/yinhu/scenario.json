@@ -1,0 +1,15 @@
+{
+  "image": "behinder-lab",
+  "probe_args": "-json -ja3=false -idle 15 -scenario yinhu -debug",
+  "expected": [
+    {
+      "event": "yinhu.udp_beacon",
+      "min_count": 1
+    }
+  ],
+  "negative": false,
+  "name": "yinhu",
+  "description": "银狐木马（闭源，协议驱动仿真）：UDP 周期 48B 小包暗道，8s±20%",
+  "duration": 75,
+  "capture_filter": "udp port 8455"
+}

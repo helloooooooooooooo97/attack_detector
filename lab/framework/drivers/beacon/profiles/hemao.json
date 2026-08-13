@@ -1,0 +1,30 @@
+{
+  "name": "hemao",
+  "transport": "https",
+  "host": "hemao-c2.local",
+  "port": 8466,
+  "method": "POST",
+  "path": "/status",
+  "params": [
+    [
+      "data",
+      "b64"
+    ]
+  ],
+  "headers": {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+  },
+  "interval": 15,
+  "jitter": 0.15,
+  "req_size": [
+    350,
+    650
+  ],
+  "resp_size": [
+    250,
+    500
+  ],
+  "keep_alive": false,
+  "duration": 70,
+  "note": "黑猫团伙（闭源，HTTPS 加密回连周期心跳，UA/URL 固定，协议驱动仿真）"
+}

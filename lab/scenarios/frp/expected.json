@@ -1,0 +1,7 @@
+{
+  "description": "frp 金标准（文章 id=20 隧道类）",
+  "events": [
+    {"event": "frp.heartbeat", "min_count": 1}
+  ],
+  "features_note": "TLS 长连接 + 周期性小记录（默认 heartbeatInterval 30s）"
+}

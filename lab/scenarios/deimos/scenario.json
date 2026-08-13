@@ -1,0 +1,15 @@
+{
+  "name": "deimos",
+  "description": "DeimosC2 TCP agent（真实 agent + 真实 RSA/AES 报文格式，15s 周期 check-in）",
+  "image": "behinder-lab",
+  "duration": 100,
+  "capture_filter": "tcp port 14000",
+  "probe_args": "-json -ja3=false -idle 15 -scenario deimos -debug",
+  "expected": [
+    {
+      "event": "deimos.checkin",
+      "min_count": 3
+    }
+  ],
+  "negative": false
+}

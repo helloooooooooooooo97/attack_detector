@@ -1,0 +1,10 @@
+{
+  "description": "loki 金标准（rat 类）",
+  "events": [
+    {
+      "event": "loki.beacon",
+      "min_count": 2
+    }
+  ],
+  "features_note": "远控工具（闭源，HTTP 周期回连短流 + 心跳节奏，协议驱动仿真）"
+}

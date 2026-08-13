@@ -1,0 +1,7 @@
+# Mythic scenario image: behinder-lab + libicu70 (the Athena .NET agent
+# requires the exact libicu.so.70 SONAME; Ubuntu 26.04 base only ships
+# libicu78, so we pull the jammy arm64 package once at build time).
+FROM behinder-lab
+RUN curl -fsSL -o /tmp/libicu70.deb \
+      http://ports.ubuntu.com/pool/main/i/icu/libicu70_70.1-2ubuntu1_arm64.deb \
+    && dpkg -i /tmp/libicu70.deb && rm -f /tmp/libicu70.deb

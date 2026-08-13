@@ -1,0 +1,10 @@
+{
+  "description": "wmrat 金标准（rat 类）",
+  "events": [
+    {
+      "event": "wmrat.beacon",
+      "min_count": 2
+    }
+  ],
+  "features_note": "蔓灵花组织远控木马（闭源，HTTP POST 周期回连 + 3DES 等自定义加密，协议驱动仿真）"
+}

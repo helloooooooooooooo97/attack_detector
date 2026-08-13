@@ -1,0 +1,15 @@
+{
+  "name": "covenant",
+  "description": "Covenant C2（真实 server + linux-arm64 grunt，DefaultHttpProfile，3s check-in）",
+  "image": "tflab-covenant",
+  "duration": 170,
+  "capture_filter": "tcp port 8080",
+  "probe_args": "-json -ja3=false -idle 15 -scenario covenant -debug",
+  "expected": [
+    {
+      "event": "covenant.http_profile",
+      "min_count": 2
+    }
+  ],
+  "negative": false
+}

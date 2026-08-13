@@ -1,0 +1,19 @@
+{
+  "name": "behinder",
+  "description": "冰蝎 v4.0.7 内存马型 webshell 加密流量（Connection: close，一操作一连接）",
+  "image": "behinder-lab",
+  "duration": 90,
+  "capture_filter": "tcp port 8443",
+  "probe_args": "-json -ja3=false -idle 5 -scenario behinder -debug",
+  "expected": [
+    {
+      "event": "behinder.mem_shell_flow",
+      "min_count": 3
+    },
+    {
+      "event": "behinder.memory_shell_aggregate",
+      "min_count": 1
+    }
+  ],
+  "negative": false
+}

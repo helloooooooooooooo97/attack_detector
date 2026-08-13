@@ -1,0 +1,83 @@
+{
+  "name": "donot",
+  "transport": "http",
+  "host": "127.0.0.1",
+  "port": 8094,
+  "method": "POST",
+  "path": "/c2",
+  "params": [
+    [
+      "data",
+      "b64"
+    ]
+  ],
+  "headers": {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+  },
+  "interval": 14,
+  "jitter": 0.1,
+  "req_size": [
+    400,
+    700
+  ],
+  "resp_size": [
+    300,
+    600
+  ],
+  "keep_alive": false,
+  "duration": 80,
+  "note": "Donot（闭源，多阶段 HTTP(S) 通信，RC4 等加密载荷，URL/UA 随阶段变化，多阶段协议驱动仿真）",
+  "mode": "multiphase",
+  "phases": [
+    {
+      "phase": "delivery",
+      "mode": "burst",
+      "transport": "http",
+      "port": 8094,
+      "path": "/push",
+      "params": [
+        [
+          "p",
+          "b64"
+        ]
+      ],
+      "burst_n": 4,
+      "burst_gap": 0.5,
+      "idle_gap": 8.0,
+      "req_size": [
+        700,
+        1400
+      ],
+      "resp_size": [
+        100,
+        300
+      ],
+      "duration": 25
+    },
+    {
+      "phase": "c2",
+      "transport": "https",
+      "host": "donot-c2.local",
+      "port": 8469,
+      "path": "/c2",
+      "params": [
+        [
+          "e",
+          "b64"
+        ]
+      ],
+      "interval": 14,
+      "jitter": 0.1,
+      "req_size": [
+        400,
+        700
+      ],
+      "resp_size": [
+        300,
+        600
+      ],
+      "keep_alive": true,
+      "duration": 55
+    }
+  ]
+}

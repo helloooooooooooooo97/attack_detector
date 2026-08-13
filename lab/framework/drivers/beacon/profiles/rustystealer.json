@@ -1,0 +1,18 @@
+{
+  "name": "rustystealer",
+  "transport": "https",
+  "host": "c2.rustystealer.local",
+  "port": 8451,
+  "method": "POST",
+  "path": "/exfil",
+  "params": [["d", "b64"]],
+  "headers": {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"},
+  "mode": "burst",
+  "burst_n": 4,
+  "burst_gap": 0.3,
+  "idle_gap": 22.0,
+  "req_size": [3000, 5000],
+  "resp_size": [60, 160],
+  "duration": 60,
+  "note": "RustyStealer（Ymir 勒索组织）：Rust 实现，HTTP(S) 加密外传短突发，上行为主，载荷加密二进制（闭源，协议驱动）"
+}

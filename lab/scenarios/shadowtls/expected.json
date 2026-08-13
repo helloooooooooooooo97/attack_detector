@@ -1,0 +1,7 @@
+{
+  "description": "shadow-tls 金标准（文章 id=18，隧道类）",
+  "events": [
+    {"event": "shadowtls.camouflage", "min_count": 2}
+  ],
+  "features_note": "TLS 伪装：小体积 ClientHello(~240B)+真实站点 ServerHello(~127B)+固定大小 app-data 记录；SNI=github.com；纯密文侧信道"
+}

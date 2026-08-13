@@ -1,0 +1,15 @@
+{
+  "name": "loki",
+  "description": "远控工具（rat，协议驱动仿真）",
+  "image": "behinder-lab",
+  "duration": 82,
+  "capture_filter": "tcp port 8087",
+  "probe_args": "-json -ja3=false -idle 15 -scenario loki -debug",
+  "expected": [
+    {
+      "event": "loki.beacon",
+      "min_count": 2
+    }
+  ],
+  "negative": false
+}

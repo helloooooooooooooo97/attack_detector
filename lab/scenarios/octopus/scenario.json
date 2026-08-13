@@ -1,0 +1,15 @@
+{
+  "name": "octopus",
+  "description": "Go C2，多协议通信（c2，协议驱动仿真）",
+  "image": "behinder-lab",
+  "duration": 82,
+  "capture_filter": "tcp port 8084",
+  "probe_args": "-json -ja3=false -idle 15 -scenario octopus -debug",
+  "expected": [
+    {
+      "event": "octopus.beacon",
+      "min_count": 2
+    }
+  ],
+  "negative": false
+}

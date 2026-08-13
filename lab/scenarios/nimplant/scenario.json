@@ -1,0 +1,12 @@
+{
+  "name": "nimplant",
+  "description": "NimPlant v2（Windows .NET 植入体，协议驱动仿真）：HTTPS beacon 短流，POST /api/init，15s±20% 周期，加密二进制载荷",
+  "image": "behinder-lab",
+  "duration": 80,
+  "capture_filter": "tcp port 8445",
+  "probe_args": "-json -ja3=false -idle 15 -scenario nimplant -debug",
+  "expected": [
+    {"event": "nimplant.beacon", "min_count": 2}
+  ],
+  "negative": false
+}

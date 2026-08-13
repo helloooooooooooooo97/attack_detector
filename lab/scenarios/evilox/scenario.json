@@ -1,0 +1,15 @@
+{
+  "name": "evilox",
+  "description": "macOS 后渗透框架（c2，协议驱动仿真）",
+  "image": "behinder-lab",
+  "duration": 97,
+  "capture_filter": "tcp port 8461",
+  "probe_args": "-json -ja3=false -idle 15 -scenario evilox -debug",
+  "expected": [
+    {
+      "event": "evilox.checkin",
+      "min_count": 2
+    }
+  ],
+  "negative": false
+}

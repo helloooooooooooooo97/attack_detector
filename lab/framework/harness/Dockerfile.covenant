@@ -1,0 +1,12 @@
+# Covenant C2 scenario image: .NET 8 SDK + source build.
+FROM mcr.microsoft.com/dotnet/sdk:8.0
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends tcpdump curl ca-certificates git \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN git clone --depth 1 https://github.com/cobbr/Covenant.git /opt/Covenant \
+    && cd /opt/Covenant/Covenant \
+    && dotnet build -c Release -o /opt/covenant-build 2>/dev/null || true
+
+WORKDIR /opt/Covenant/Covenant

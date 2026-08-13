@@ -1,0 +1,7 @@
+{
+  "description": "Weevely 金标准（文章 id=1 WebShell 工具类）",
+  "events": [
+    {"event": "weevely.interactive_shell", "min_count": 1}
+  ],
+  "features_note": "非 TLS；同端点重复短 HTTP 流（命令节奏 2-30s），请求 400-700B、响应 ~220B"
+}

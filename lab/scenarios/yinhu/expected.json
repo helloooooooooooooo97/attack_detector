@@ -1,0 +1,11 @@
+{
+  "description": "yinhu 金标准",
+  "events": [
+    {
+      "event": "yinhu.udp_beacon",
+      "min_count": 1
+    }
+  ],
+  "features_note": "UDP 周期 48B 小包暗道（8s±20%）；HTTPS 回连双通道；加密载荷，流量规律性强",
+  "expected": null
+}

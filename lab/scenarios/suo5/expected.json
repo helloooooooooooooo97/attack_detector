@@ -1,0 +1,7 @@
+{
+  "description": "suo5 v2.2 加密隧道金标准（文章 id=162）",
+  "events": [
+    {"event": "suo5.ja3_randomization", "min_count": 1}
+  ],
+  "features_note": "v1.1+ 每次握手 JA3 随机化：同源多条短 TLS 流出现 ≥2 个不同 ClientHello 指纹（聚合规则）；隧道建立后还有 5s 心跳（suo5.heartbeat）"
+}

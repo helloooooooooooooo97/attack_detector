@@ -1,0 +1,7 @@
+{
+  "description": "Ligolo-ng v0.9 TLS+yamux 心跳金标准（文章 id=181 的指纹）",
+  "events": [
+    {"event": "ligolo.tunnel_heartbeat", "min_count": 1}
+  ],
+  "features_note": "TLS 1.3 AES-128-GCM；双向周期小记录(~29B)；proxy 30s / agent 60s 心跳；先下行后上行"
+}

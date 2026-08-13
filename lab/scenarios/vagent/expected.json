@@ -1,0 +1,10 @@
+{
+  "description": "vagent 金标准（webshell 类）",
+  "events": [
+    {
+      "event": "vagent.heartbeat",
+      "min_count": 1
+    }
+  ],
+  "features_note": "注入型内存马加密通信（闭源，HTTPS 长连接周期小包心跳，协议驱动仿真）"
+}

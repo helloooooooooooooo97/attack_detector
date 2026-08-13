@@ -1,0 +1,11 @@
+{
+  "description": "ktlvdoor 金标准",
+  "events": [
+    {
+      "event": "ktlvdoor.heartbeat",
+      "min_count": 1
+    }
+  ],
+  "features_note": "TCP 长连接；固定帧头（KTLV）+ 自定义加密；15s±15% 周期心跳（150-350B）",
+  "expected": null
+}

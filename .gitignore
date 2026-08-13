@@ -1,0 +1,21 @@
+# --- Python / venv ---
+.venv/
+lab/.venv/
+lab/ml/.venv/
+__pycache__/
+*.pyc
+
+# --- Node ---
+lab/web/node_modules/
+lab/web/dist/
+
+# --- macOS ---
+.DS_Store
+
+# --- lab runtime artifacts (keep only traffic pcaps) ---
+lab/out/*
+!lab/out/*.pcap
+
+# --- misc ---
+*.log
+*.deleted

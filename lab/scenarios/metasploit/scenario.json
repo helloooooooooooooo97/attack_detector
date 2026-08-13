@@ -1,0 +1,12 @@
+{
+  "name": "metasploit",
+  "description": "Metasploit meterpreter_reverse_https（TLS C2，周期通信）",
+  "image": "tflab-msf",
+  "duration": 150,
+  "capture_filter": "tcp port 4443",
+  "probe_args": "-json -ja3=false -idle 20 -scenario metasploit",
+  "expected": [
+    {"event": "metasploit.meterpreter", "min_count": 1}
+  ],
+  "negative": false
+}

@@ -1,0 +1,30 @@
+{
+  "name": "evilox",
+  "transport": "https",
+  "host": "evilox-c2.local",
+  "port": 8461,
+  "method": "POST",
+  "path": "/api/checkin",
+  "params": [
+    [
+      "data",
+      "b64"
+    ]
+  ],
+  "headers": {
+    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 Safari/605.1.15"
+  },
+  "interval": 20,
+  "jitter": 0.2,
+  "req_size": [
+    400,
+    800
+  ],
+  "resp_size": [
+    200,
+    500
+  ],
+  "keep_alive": false,
+  "duration": 85,
+  "note": "macOS 后渗透框架（agent 仅 macOS，HTTPS 周期 checkin + JXA 载荷，UA 伪装 Mac 浏览器，协议驱动仿真）"
+}

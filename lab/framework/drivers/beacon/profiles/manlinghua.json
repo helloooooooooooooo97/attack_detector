@@ -1,0 +1,39 @@
+{
+  "name": "manlinghua",
+  "transport": "http",
+  "host": "127.0.0.1",
+  "port": 8083,
+  "mode": "multiphase",
+  "duration": 75,
+  "phases": [
+    {
+      "phase": "delivery",
+      "mode": "burst",
+      "transport": "http",
+      "port": 8083,
+      "path": "/delivery",
+      "params": [["p", "b64"]],
+      "burst_n": 4,
+      "burst_gap": 0.5,
+      "idle_gap": 8.0,
+      "req_size": [800, 1500],
+      "resp_size": [100, 300],
+      "duration": 25
+    },
+    {
+      "phase": "c2",
+      "transport": "https",
+      "host": "ml-c2.local",
+      "port": 8456,
+      "path": "/c2",
+      "params": [["e", "b64"]],
+      "interval": 12.0,
+      "jitter": 0.1,
+      "req_size": [400, 700],
+      "resp_size": [300, 600],
+      "keep_alive": true,
+      "duration": 50
+    }
+  ],
+  "note": "蔓灵花武器库：多阶段，投递期 HTTP 短流突发 + 驻留后加密 C2 长连接，阶段切换流量突变（闭源，协议驱动）"
+}

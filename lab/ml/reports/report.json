@@ -1,0 +1,461 @@
+{
+  "dataset": {
+    "n": 10118,
+    "malicious": 5530,
+    "normal": 4588
+  },
+  "random_split": {
+    "fixed_0.5": {
+      "recall": 0.9771084337349397,
+      "precision": 0.9771084337349397,
+      "f1": 0.9771084337349397,
+      "auroc": 0.9988117928899924,
+      "auprc": 0.9990257223052345,
+      "specificity": 0.9724238026124818,
+      "n": 1519,
+      "tp": 811,
+      "fp": 19,
+      "fn": 19,
+      "tn": 670
+    },
+    "tuned": {
+      "recall": 0.946987951807229,
+      "precision": 0.9987293519695044,
+      "f1": 0.9721706864564008,
+      "auroc": 0.9988117928899924,
+      "auprc": 0.9990257223052345,
+      "specificity": 0.9985486211901307,
+      "n": 1519,
+      "tp": 786,
+      "fp": 1,
+      "fn": 44,
+      "tn": 688
+    }
+  },
+  "random_split_per_tool": [
+    {
+      "tool": "normal",
+      "recall": 0.9985486211901307,
+      "n": 689,
+      "fp": 1
+    },
+    {
+      "tool": "abptts",
+      "recall": 1.0,
+      "n": 3,
+      "tp": 3
+    },
+    {
+      "tool": "apt29",
+      "recall": 1.0,
+      "n": 1,
+      "tp": 1
+    },
+    {
+      "tool": "aptc68",
+      "recall": 1.0,
+      "n": 1,
+      "tp": 1
+    },
+    {
+      "tool": "behinder",
+      "recall": 0.0,
+      "n": 2,
+      "tp": 0
+    },
+    {
+      "tool": "bruteforce",
+      "recall": 1.0,
+      "n": 13,
+      "tp": 13
+    },
+    {
+      "tool": "bruteforce_http",
+      "recall": 1.0,
+      "n": 141,
+      "tp": 141
+    },
+    {
+      "tool": "bruteforce_scan",
+      "recall": 1.0,
+      "n": 460,
+      "tp": 460
+    },
+    {
+      "tool": "bruteforce_ssh",
+      "recall": 1.0,
+      "n": 110,
+      "tp": 110
+    },
+    {
+      "tool": "bruteratel",
+      "recall": 1.0,
+      "n": 2,
+      "tp": 2
+    },
+    {
+      "tool": "chopper",
+      "recall": 1.0,
+      "n": 2,
+      "tp": 2
+    },
+    {
+      "tool": "close",
+      "recall": 1.0,
+      "n": 1,
+      "tp": 1
+    },
+    {
+      "tool": "cobaltstrike",
+      "recall": 1.0,
+      "n": 2,
+      "tp": 2
+    },
+    {
+      "tool": "deimos",
+      "recall": 0.0,
+      "n": 2,
+      "tp": 0
+    },
+    {
+      "tool": "donot",
+      "recall": 1.0,
+      "n": 3,
+      "tp": 3
+    },
+    {
+      "tool": "fatalrat",
+      "recall": 1.0,
+      "n": 1,
+      "tp": 1
+    },
+    {
+      "tool": "ghostwriter",
+      "recall": 1.0,
+      "n": 1,
+      "tp": 1
+    },
+    {
+      "tool": "ksrat",
+      "recall": 1.0,
+      "n": 1,
+      "tp": 1
+    },
+    {
+      "tool": "lazarus",
+      "recall": 1.0,
+      "n": 2,
+      "tp": 2
+    },
+    {
+      "tool": "ligolo",
+      "recall": 0.0,
+      "n": 1,
+      "tp": 0
+    },
+    {
+      "tool": "loki",
+      "recall": 1.0,
+      "n": 1,
+      "tp": 1
+    },
+    {
+      "tool": "manlinghua",
+      "recall": 0.6666666666666666,
+      "n": 3,
+      "tp": 2
+    },
+    {
+      "tool": "metasploit",
+      "recall": 1.0,
+      "n": 21,
+      "tp": 21
+    },
+    {
+      "tool": "mythic",
+      "recall": 0.0,
+      "n": 1,
+      "tp": 0
+    },
+    {
+      "tool": "natpass",
+      "recall": 0.0,
+      "n": 1,
+      "tp": 0
+    },
+    {
+      "tool": "oilrig",
+      "recall": 1.0,
+      "n": 1,
+      "tp": 1
+    },
+    {
+      "tool": "platypus",
+      "recall": 0.0,
+      "n": 1,
+      "tp": 0
+    },
+    {
+      "tool": "real_negative",
+      "recall": 0.06451612903225806,
+      "n": 31,
+      "tp": 2
+    },
+    {
+      "tool": "rustystealer",
+      "recall": 1.0,
+      "n": 1,
+      "tp": 1
+    },
+    {
+      "tool": "shadowtls",
+      "recall": 0.0,
+      "n": 3,
+      "tp": 0
+    },
+    {
+      "tool": "sliver",
+      "recall": 0.0,
+      "n": 1,
+      "tp": 0
+    },
+    {
+      "tool": "sparkrat",
+      "recall": 1.0,
+      "n": 2,
+      "tp": 2
+    },
+    {
+      "tool": "suo5",
+      "recall": 0.5,
+      "n": 2,
+      "tp": 1
+    },
+    {
+      "tool": "transparenttribe",
+      "recall": 1.0,
+      "n": 1,
+      "tp": 1
+    },
+    {
+      "tool": "tristealer",
+      "recall": 1.0,
+      "n": 4,
+      "tp": 4
+    },
+    {
+      "tool": "weevely",
+      "recall": 1.0,
+      "n": 3,
+      "tp": 3
+    },
+    {
+      "tool": "wmrat",
+      "recall": 1.0,
+      "n": 2,
+      "tp": 2
+    },
+    {
+      "tool": "xiebro",
+      "recall": 0.0,
+      "n": 1,
+      "tp": 0
+    },
+    {
+      "tool": "zloader",
+      "recall": 1.0,
+      "n": 1,
+      "tp": 1
+    }
+  ],
+  "scenario_split": {
+    "held_out_tools": [
+      "abptts",
+      "aptc68",
+      "bruteforce_scan",
+      "cobaltstrike",
+      "fatalrat",
+      "hemao",
+      "ligolo",
+      "mythic",
+      "octopus",
+      "real_negative",
+      "silenttrinity",
+      "sparkrat",
+      "tristealer",
+      "xiebro"
+    ],
+    "fixed_0.5": {
+      "recall": 0.9486866218692731,
+      "precision": 0.9990350595046639,
+      "f1": 0.9732100892997023,
+      "auroc": 0.9899542775777488,
+      "auprc": 0.9972265512411371,
+      "specificity": 0.9956458635703919,
+      "n": 3963,
+      "tp": 3106,
+      "fp": 3,
+      "fn": 168,
+      "tn": 686
+    },
+    "tuned": {
+      "recall": 0.9474648747709224,
+      "precision": 0.9993556701030928,
+      "f1": 0.9727187206020697,
+      "auroc": 0.9899542775777488,
+      "auprc": 0.9972265512411371,
+      "specificity": 0.9970972423802612,
+      "n": 3963,
+      "tp": 3102,
+      "fp": 2,
+      "fn": 172,
+      "tn": 687
+    }
+  },
+  "scenario_split_per_tool": [
+    {
+      "tool": "normal",
+      "recall": 0.9956458635703919,
+      "n": 689,
+      "fp": 3
+    },
+    {
+      "tool": "abptts",
+      "recall": 0.9615384615384616,
+      "n": 26,
+      "tp": 25
+    },
+    {
+      "tool": "aptc68",
+      "recall": 1.0,
+      "n": 5,
+      "tp": 5
+    },
+    {
+      "tool": "bruteforce_scan",
+      "recall": 1.0,
+      "n": 3000,
+      "tp": 3000
+    },
+    {
+      "tool": "cobaltstrike",
+      "recall": 1.0,
+      "n": 15,
+      "tp": 15
+    },
+    {
+      "tool": "fatalrat",
+      "recall": 1.0,
+      "n": 6,
+      "tp": 6
+    },
+    {
+      "tool": "hemao",
+      "recall": 1.0,
+      "n": 5,
+      "tp": 5
+    },
+    {
+      "tool": "ligolo",
+      "recall": 0.6666666666666666,
+      "n": 3,
+      "tp": 2
+    },
+    {
+      "tool": "mythic",
+      "recall": 0.0,
+      "n": 1,
+      "tp": 0
+    },
+    {
+      "tool": "octopus",
+      "recall": 1.0,
+      "n": 5,
+      "tp": 5
+    },
+    {
+      "tool": "real_negative",
+      "recall": 0.11891891891891893,
+      "n": 185,
+      "tp": 22
+    },
+    {
+      "tool": "silenttrinity",
+      "recall": 0.0,
+      "n": 1,
+      "tp": 0
+    },
+    {
+      "tool": "sparkrat",
+      "recall": 1.0,
+      "n": 6,
+      "tp": 6
+    },
+    {
+      "tool": "tristealer",
+      "recall": 1.0,
+      "n": 15,
+      "tp": 15
+    },
+    {
+      "tool": "xiebro",
+      "recall": 0.0,
+      "n": 1,
+      "tp": 0
+    }
+  ],
+  "bruteforce": {
+    "C1 同分布留出 30%": {
+      "recall": 1.0,
+      "precision": 0.976,
+      "f1": 0.9878542510121457,
+      "auroc": 1.0,
+      "auprc": 1.0,
+      "specificity": 0.965166908563135,
+      "n": 1665,
+      "tp": 976,
+      "fp": 24,
+      "fn": 0,
+      "tn": 665
+    },
+    "C2 跨模式: 未见 SYN 扫描": {
+      "recall": 1.0,
+      "precision": 0.9923916639100232,
+      "f1": 0.9961813049975096,
+      "auroc": 0.9666182873730044,
+      "auprc": 0.9625968765973565,
+      "specificity": 0.9666182873730044,
+      "n": 3689,
+      "tp": 3000,
+      "fp": 23,
+      "fn": 0,
+      "tn": 666
+    },
+    "C3 跨模式: 未见 SSH 爆破": {
+      "recall": 0.0,
+      "precision": 0.0,
+      "f1": 0.0,
+      "auroc": 0.8062473794549266,
+      "auprc": 0.6462898888990445,
+      "specificity": 0.969521044992743,
+      "n": 1589,
+      "tp": 0,
+      "fp": 21,
+      "fn": 900,
+      "tn": 668
+    },
+    "C4 跨模式: 未见 HTTP 爆破": {
+      "recall": 1.0,
+      "precision": 0.9761388286334056,
+      "f1": 0.9879253567508233,
+      "auroc": 1.0,
+      "auprc": 0.9999999999999999,
+      "specificity": 0.9680696661828737,
+      "n": 1589,
+      "tp": 900,
+      "fp": 22,
+      "fn": 0,
+      "tn": 667
+    }
+  }
+}

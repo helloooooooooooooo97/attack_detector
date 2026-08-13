@@ -1,0 +1,12 @@
+{
+  "name": "suo5",
+  "description": "suo5 v2.2 HTTP 隧道（5s 心跳；v1.1+ 每次握手随机化 TLS 指纹）",
+  "image": "behinder-lab",
+  "duration": 70,
+  "capture_filter": "tcp port 8443",
+  "probe_args": "-json -ja3=false -idle 10 -scenario suo5 -debug",
+  "expected": [
+    {"event": "suo5.ja3_randomization", "min_count": 1}
+  ],
+  "negative": false
+}

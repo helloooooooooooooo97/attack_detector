@@ -1,0 +1,7 @@
+{
+  "description": "菜刀 China Chopper 金标准（文章 id=1，WebShell 类）",
+  "events": [
+    {"event": "chopper.eval_flow", "min_count": 3}
+  ],
+  "features_note": "明文 HTTP POST 短流；参数固定字段名（z0/z1）+ base64 载荷（@eval）；500B-2KB 级请求；操作即连接，无心跳"
+}

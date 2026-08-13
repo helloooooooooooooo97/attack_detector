@@ -1,0 +1,15 @@
+{
+  "name": "donot",
+  "description": "Donot（apt，协议驱动仿真）",
+  "image": "behinder-lab",
+  "duration": 92,
+  "capture_filter": "tcp port 8094 or tcp port 8469",
+  "probe_args": "-json -ja3=false -idle 15 -scenario donot -debug",
+  "expected": [
+    {
+      "event": "donot.c2_phase",
+      "min_count": 1
+    }
+  ],
+  "negative": false
+}

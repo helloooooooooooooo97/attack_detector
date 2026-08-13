@@ -1,0 +1,12 @@
+{
+  "name": "yinhu",
+  "transport": "udp",
+  "host": "127.0.0.1",
+  "port": 8455,
+  "mode": "udp",
+  "interval": 8.0,
+  "jitter": 0.2,
+  "req_size": [48, 48],
+  "duration": 60,
+  "note": "银狐木马系列：UDP 周期小包暗道 + HTTPS 回连双通道，加密载荷，流量规律性强（本场景仿真 UDP 暗道通道，闭源）"
+}

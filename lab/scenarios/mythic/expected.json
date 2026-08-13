@@ -1,0 +1,7 @@
+{
+  "description": "Mythic 金标准（文章 id=116，C2 类）",
+  "events": [
+    {"event": "mythic.http_checkin", "min_count": 1}
+  ],
+  "features_note": "非 TLS HTTP 长连接；周期 GET /index?q=<长 base64 密文>（~390B）+ 初始 POST /data（~2.7KB）；响应 200 + Cache-Control: max-age=0,no-cache，~200B 稳定大小；~10s 周期 ±抖动"
+}

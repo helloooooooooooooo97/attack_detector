@@ -1,0 +1,15 @@
+{
+  "name": "ligolo",
+  "description": "Ligolo-ng v0.9 隐蔽隧道（TLS+yamux 双心跳：proxy 30s / agent 60s）",
+  "image": "behinder-lab",
+  "duration": 200,
+  "capture_filter": "tcp port 11601",
+  "probe_args": "-json -ja3=false -idle 95 -scenario ligolo -debug",
+  "expected": [
+    {
+      "event": "ligolo.tunnel_heartbeat",
+      "min_count": 1
+    }
+  ],
+  "negative": false
+}

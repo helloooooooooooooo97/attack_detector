@@ -1,0 +1,10 @@
+{
+  "description": "hemao 金标准（apt 类）",
+  "events": [
+    {
+      "event": "hemao.beacon",
+      "min_count": 2
+    }
+  ],
+  "features_note": "黑猫团伙（闭源，HTTPS 加密回连周期心跳，UA/URL 固定，协议驱动仿真）"
+}

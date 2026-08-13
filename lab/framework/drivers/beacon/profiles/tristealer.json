@@ -1,0 +1,18 @@
+{
+  "name": "tristealer",
+  "transport": "http",
+  "host": "127.0.0.1",
+  "port": 8082,
+  "method": "POST",
+  "path": "/upload",
+  "params": [["f", "b64"]],
+  "headers": {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"},
+  "mode": "burst",
+  "burst_n": 5,
+  "burst_gap": 0.3,
+  "idle_gap": 20.0,
+  "req_size": [2500, 4000],
+  "resp_size": [50, 150],
+  "duration": 60,
+  "note": "TriStealer：上线与窃密外传为短 HTTP POST 突发，上行显著大于下行，无固定心跳（闭源，协议驱动）"
+}

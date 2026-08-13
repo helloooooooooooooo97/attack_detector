@@ -1,0 +1,12 @@
+{
+  "name": "simayrat",
+  "description": "SiMayRAT（C# Windows agent，协议驱动仿真）：HTTPS 借道云端文档服务做 C2，GET 轮询，载荷伪装 JSON，15s±10%",
+  "image": "behinder-lab",
+  "duration": 80,
+  "capture_filter": "tcp port 8447",
+  "probe_args": "-json -ja3=false -idle 15 -scenario simayrat -debug",
+  "expected": [
+    {"event": "simayrat.poll", "min_count": 2}
+  ],
+  "negative": false
+}

@@ -1,0 +1,15 @@
+{
+  "name": "natpass",
+  "description": "natpass v0.13 内网穿透（protobuf 握手 + TCP keepalive）",
+  "image": "behinder-lab",
+  "duration": 60,
+  "capture_filter": "tcp port 6154",
+  "probe_args": "-json -ja3=false -idle 10 -scenario natpass -debug",
+  "expected": [
+    {
+      "event": "natpass.handshake",
+      "min_count": 1
+    }
+  ],
+  "negative": false
+}

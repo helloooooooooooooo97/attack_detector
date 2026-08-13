@@ -1,0 +1,12 @@
+{
+  "name": "bruteratel",
+  "description": "Brute Ratel C4 BADGER（闭源，agent 仅 Windows，协议驱动仿真）：HTTPS POST beacon，20s±15% 周期，载荷 profile 可塑",
+  "image": "behinder-lab",
+  "duration": 100,
+  "capture_filter": "tcp port 8446",
+  "probe_args": "-json -ja3=false -idle 15 -scenario bruteratel -debug",
+  "expected": [
+    {"event": "bruteratel.beacon", "min_count": 2}
+  ],
+  "negative": false
+}

@@ -1,0 +1,39 @@
+# Suricata rules for Behinder (ice scorpion) detection.
+#
+# Layer mapping:
+#   HTTP layer rules   -> work only where HTTP is visible (plaintext HTTP
+#                         deployments or TLS-decrypting sensors)
+#   TLS JA3 rules      -> low-confidence: the fingerprint is Java/OkHttp,
+#                         shared by many benign Java clients
+#   Record/flow rules  -> NOT expressible in pure Suricata rule syntax;
+#                         use lab/detect.py or a Zeek script instead
+
+# ---------------------------------------------------------------
+# 1) HTTP layer: Behinder default AES shell traffic (plaintext HTTP)
+#    POST .jsp, 8-16KB body, known client UA list, base64-only response
+# ---------------------------------------------------------------
+alert http $HOME_NET any -> $EXTERNAL_NET any ( \
+    msg:"ET MALWARE Behinder WebShell Default AES POST (jsp)"; \
+    flow:to_server,established; \
+    http.method; content:"POST"; \
+    http.uri; content:".jsp"; \
+    http.request_body; length:8000<>16000; \
+    http.user_agent; pcre:"/(Chrome\/8[49]\.0|Firefox\/87\.0|Firefox\/98\.0|Edg\/99\.0)/"; \
+    classtype:trojan-activity; sid:2080001; rev:1;)
+
+alert http $EXTERNAL_NET any -> $HOME_NET any ( \
+    msg:"ET MALWARE Behinder WebShell Default AES Response (base64 JSON blob)"; \
+    flow:from_server,established; \
+    http.response_body; pcre:"/^[A-Za-z0-9+\/=\r\n]{200,}$/"; \
+    http.content_type; content:"text/html"; \
+    classtype:trojan-activity; sid:2080002; rev:1;)
+
+# ---------------------------------------------------------------
+# 2) TLS layer: Behinder client JA3 (JDK11 + OkHttp 4.9.x).
+#    Low confidence -- shared with any OkHttp/JSSE client.
+# ---------------------------------------------------------------
+alert tls $HOME_NET any -> any any ( \
+    msg:"ET MALWARE Behinder JA3 (JDK11+OkHttp TLS1.2, LOW CONFIDENCE)"; \
+    tls.fingerprint; \
+    pcre:"/^771,4866-4865-4867-49196-49195-52393-49200-52392-49199-49172-49171,5-10-11-13-16-17-23-4[13]-45-50-51-65281,29-23-24-25-30-256-257-258-259-260,0$/"; \
+    classtype:trojan-activity; sid:2080003; rev:1;)

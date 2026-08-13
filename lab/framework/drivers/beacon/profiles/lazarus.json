@@ -1,0 +1,30 @@
+{
+  "name": "lazarus",
+  "transport": "https",
+  "host": "lazarus-c2.local",
+  "port": 8467,
+  "method": "POST",
+  "path": "/api/beacon",
+  "params": [
+    [
+      "data",
+      "b64"
+    ]
+  ],
+  "headers": {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+  },
+  "interval": 25,
+  "jitter": 0.3,
+  "req_size": [
+    500,
+    900
+  ],
+  "resp_size": [
+    300,
+    600
+  ],
+  "keep_alive": false,
+  "duration": 100,
+  "note": "Lazarus（闭源，木马化软件投递 + HTTPS 加密 C2 回连，beacon 周期+抖动，协议驱动仿真）"
+}

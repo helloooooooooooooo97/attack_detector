@@ -1,0 +1,30 @@
+{
+  "name": "perfspyrat",
+  "transport": "http",
+  "host": "127.0.0.1",
+  "port": 8090,
+  "method": "POST",
+  "path": "/perf/report",
+  "params": [
+    [
+      "data",
+      "b64"
+    ]
+  ],
+  "headers": {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+  },
+  "interval": 10,
+  "jitter": 0.2,
+  "req_size": [
+    250,
+    550
+  ],
+  "resp_size": [
+    150,
+    400
+  ],
+  "keep_alive": false,
+  "duration": 55,
+  "note": "海莲花远控木马（闭源，HTTP 周期回连，短流节奏固定，协议驱动仿真）"
+}

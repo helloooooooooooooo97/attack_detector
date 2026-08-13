@@ -1,0 +1,30 @@
+{
+  "name": "fatalrat",
+  "transport": "http",
+  "host": "127.0.0.1",
+  "port": 8091,
+  "method": "POST",
+  "path": "/fatal/check",
+  "params": [
+    [
+      "data",
+      "b64"
+    ]
+  ],
+  "headers": {
+    "User-Agent": "Mozilla/5.0 (Windows NT 6.1; Win64; x64)"
+  },
+  "interval": 12,
+  "jitter": 0.15,
+  "req_size": [
+    300,
+    600
+  ],
+  "resp_size": [
+    200,
+    450
+  ],
+  "keep_alive": false,
+  "duration": 61,
+  "note": "针对中国的远控木马（闭源，HTTP 短流周期回连，心跳间隔稳定，协议驱动仿真）"
+}

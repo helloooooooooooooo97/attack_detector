@@ -1,0 +1,15 @@
+{
+  "image": "behinder-lab",
+  "probe_args": "-json -ja3=false -idle 15 -scenario rakshasa -debug",
+  "expected": [
+    {
+      "event": "rakshasa.keepalive",
+      "min_count": 1
+    }
+  ],
+  "negative": false,
+  "name": "rakshasa",
+  "description": "Rakshasa（闭源，协议驱动仿真）：TCP 长连接 + 固定帧头 + 20s±15% keepalive",
+  "duration": 95,
+  "capture_filter": "tcp port 8454"
+}

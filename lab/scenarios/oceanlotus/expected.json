@@ -1,0 +1,7 @@
+{
+  "description": "海莲花 OceanLotus 金标准（文章 id=175，APT 类）",
+  "events": [
+    {"event": "oceanlotus.beacon", "min_count": 2}
+  ],
+  "features_note": "HTTPS 远控周期回连；固定 SNI cdn.oceanlotus.local；固定 UA（MSIE 6.0）；自定义加密载荷，请求 800-1200B > 响应 300-600B；实验室周期 20s±20%"
+}

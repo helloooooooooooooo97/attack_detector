@@ -1,0 +1,11 @@
+{
+  "description": "silenttrinity 金标准",
+  "events": [
+    {
+      "event": "silenttrinity.checkin",
+      "min_count": 1
+    }
+  ],
+  "features_note": "HTTPS 长连接周期 checkin（仿真 gRPC/HTTP2+mTLS 形态）；固定 SNI st-grpc.local；周期 10s±10%；staging 与 checkin 节奏固定",
+  "expected": null
+}

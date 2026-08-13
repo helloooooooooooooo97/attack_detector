@@ -1,0 +1,30 @@
+{
+  "name": "sparkrat",
+  "transport": "http",
+  "host": "127.0.0.1",
+  "port": 8085,
+  "method": "POST",
+  "path": "/spark/check",
+  "params": [
+    [
+      "data",
+      "b64"
+    ]
+  ],
+  "headers": {
+    "User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64)"
+  },
+  "interval": 10,
+  "jitter": 0.2,
+  "req_size": [
+    300,
+    600
+  ],
+  "resp_size": [
+    200,
+    500
+  ],
+  "keep_alive": false,
+  "duration": 55,
+  "note": "远控木马（闭源，HTTP 周期上线心跳，固定 UA/URL，协议驱动仿真）"
+}

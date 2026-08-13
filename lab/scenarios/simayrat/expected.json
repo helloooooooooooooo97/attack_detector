@@ -1,0 +1,7 @@
+{
+  "description": "SiMayRAT 金标准（文章 id=28，RAT 类）",
+  "events": [
+    {"event": "simayrat.poll", "min_count": 2}
+  ],
+  "features_note": "HTTPS 连云端文档服务做 C2；固定 SNI docs.simayrat.local；GET /api/documents + base64 载荷（伪装文档/JSON）；固定周期轮询（实验室 15s±10%）"
+}

@@ -1,0 +1,10 @@
+{
+  "name": "normal",
+  "description": "正常浏览基线（同一 TLS 栈，普通 HTTPS GET），负样本",
+  "image": "behinder-lab",
+  "duration": 60,
+  "capture_filter": "tcp port 8443",
+  "probe_args": "-json -ja3=false -idle 5 -scenario behinder,ligolo -debug",
+  "expected": [],
+  "negative": true
+}

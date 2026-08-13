@@ -1,0 +1,11 @@
+{
+  "description": "rakshasa 金标准",
+  "events": [
+    {
+      "event": "rakshasa.keepalive",
+      "min_count": 1
+    }
+  ],
+  "features_note": "TCP 长连接；固定帧头（RAKS）+ 固定块大小；20s±15% 周期 keepalive",
+  "expected": null
+}

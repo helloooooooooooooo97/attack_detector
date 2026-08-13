@@ -1,0 +1,15 @@
+{
+  "name": "sish",
+  "description": "sish v2.23 SSH 反向隧道（真实 sish server + ssh -R，5s 保活）",
+  "image": "behinder-lab",
+  "duration": 90,
+  "capture_filter": "tcp port 2222",
+  "probe_args": "-json -ja3=false -idle 15 -scenario sish -debug",
+  "expected": [
+    {
+      "event": "sish.ssh_tunnel",
+      "min_count": 1
+    }
+  ],
+  "negative": false
+}

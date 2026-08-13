@@ -1,0 +1,15 @@
+{
+  "image": "behinder-lab",
+  "probe_args": "-json -ja3=false -idle 15 -scenario ktlvdoor -debug",
+  "expected": [
+    {
+      "event": "ktlvdoor.heartbeat",
+      "min_count": 1
+    }
+  ],
+  "negative": false,
+  "name": "ktlvdoor",
+  "description": "KTLVdoor（闭源，协议驱动仿真）：TCP 长连接 + 固定帧头 + 15s±15% 周期心跳",
+  "duration": 90,
+  "capture_filter": "tcp port 8453"
+}

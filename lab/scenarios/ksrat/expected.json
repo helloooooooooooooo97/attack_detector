@@ -1,0 +1,10 @@
+{
+  "description": "ksrat 金标准（rat 类）",
+  "events": [
+    {
+      "event": "ksrat.beacon",
+      "min_count": 2
+    }
+  ],
+  "features_note": "海莲花使用的远控木马（闭源，HTTP POST 分钟级周期回连，固定 UA/URL，实验室 20s，协议驱动仿真）"
+}

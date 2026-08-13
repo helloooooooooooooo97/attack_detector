@@ -1,0 +1,15 @@
+{
+  "image": "behinder-lab",
+  "probe_args": "-json -ja3=false -idle 15 -scenario tristealer -debug",
+  "expected": [
+    {
+      "event": "tristealer.exfil_burst",
+      "min_count": 2
+    }
+  ],
+  "negative": false,
+  "name": "tristealer",
+  "description": "TriStealer（闭源，协议驱动仿真）：HTTP POST 短突发外传，上行显著大于下行，无固定心跳",
+  "duration": 75,
+  "capture_filter": "tcp port 8082"
+}

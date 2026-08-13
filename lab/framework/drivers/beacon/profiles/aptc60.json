@@ -1,0 +1,30 @@
+{
+  "name": "aptc60",
+  "transport": "https",
+  "host": "pan.aptc60.local",
+  "port": 8464,
+  "method": "POST",
+  "path": "/api/list",
+  "params": [
+    [
+      "data",
+      "b64"
+    ]
+  ],
+  "headers": {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+  },
+  "interval": 20,
+  "jitter": 0.2,
+  "req_size": [
+    400,
+    800
+  ],
+  "resp_size": [
+    400,
+    900
+  ],
+  "keep_alive": false,
+  "duration": 85,
+  "note": "伪猎者 APT-C-60（闭源，借道云盘/网盘 HTTPS 加密 C2，周期轮询，协议驱动仿真）"
+}

@@ -1,0 +1,12 @@
+{
+  "name": "transparenttribe",
+  "description": "摩诃草 TransparentTribe（闭源，协议驱动仿真）：C2 借道 Telegram 风格 HTTPS API，GET 短轮询 10s±10%，载荷在消息文本",
+  "image": "behinder-lab",
+  "duration": 70,
+  "capture_filter": "tcp port 8449",
+  "probe_args": "-json -ja3=false -idle 15 -scenario transparenttribe -debug",
+  "expected": [
+    {"event": "transparenttribe.poll", "min_count": 2}
+  ],
+  "negative": false
+}

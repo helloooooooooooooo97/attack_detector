@@ -1,0 +1,15 @@
+{
+  "name": "perfspyrat",
+  "description": "海莲花远控木马（rat，协议驱动仿真）",
+  "image": "behinder-lab",
+  "duration": 67,
+  "capture_filter": "tcp port 8090",
+  "probe_args": "-json -ja3=false -idle 15 -scenario perfspyrat -debug",
+  "expected": [
+    {
+      "event": "perfspyrat.beacon",
+      "min_count": 2
+    }
+  ],
+  "negative": false
+}

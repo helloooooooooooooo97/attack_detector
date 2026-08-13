@@ -1,0 +1,10 @@
+{
+  "description": "sidewinder 金标准（apt 类）",
+  "events": [
+    {
+      "event": "sidewinder.c2_phase",
+      "min_count": 1
+    }
+  ],
+  "features_note": "响尾蛇 APT（闭源，投递期 HTTP 下载突发 + C2 HTTPS 周期短流，多阶段协议驱动仿真）"
+}

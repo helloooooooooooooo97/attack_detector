@@ -1,0 +1,15 @@
+{
+  "name": "abptts",
+  "description": "ABPTTS v1.0（原版 Python2 客户端 + Tomcat JSP 隧道，AES 加密 HTTP 隧道）",
+  "image": "behinder-lab-py2",
+  "duration": 90,
+  "capture_filter": "tcp port 8080",
+  "probe_args": "-json -ja3=false -idle 15 -scenario abptts -debug",
+  "expected": [
+    {
+      "event": "abptts.tunnel_post",
+      "min_count": 4
+    }
+  ],
+  "negative": false
+}

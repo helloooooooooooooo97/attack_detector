@@ -1,0 +1,7 @@
+{
+  "description": "NimPlant 金标准（文章 id=125，C2 类）",
+  "events": [
+    {"event": "nimplant.beacon", "min_count": 2}
+  ],
+  "features_note": "HTTPS beacon 短流；固定 SNI nimplant-c2.local；POST /api/init + base64 加密二进制载荷；真实默认 60s±抖动（实验室 15s）；无长连接"
+}

@@ -1,0 +1,15 @@
+{
+  "name": "ksrat",
+  "description": "海莲花使用的远控木马（rat，协议驱动仿真）",
+  "image": "behinder-lab",
+  "duration": 97,
+  "capture_filter": "tcp port 8086",
+  "probe_args": "-json -ja3=false -idle 15 -scenario ksrat -debug",
+  "expected": [
+    {
+      "event": "ksrat.beacon",
+      "min_count": 2
+    }
+  ],
+  "negative": false
+}

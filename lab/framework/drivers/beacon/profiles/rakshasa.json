@@ -1,0 +1,13 @@
+{
+  "name": "rakshasa",
+  "transport": "tcp",
+  "host": "127.0.0.1",
+  "port": 8454,
+  "mode": "tcp_stream",
+  "frame": {"header_len": 8, "magic": "52414B53"},
+  "interval": 20.0,
+  "jitter": 0.15,
+  "req_size": [200, 400],
+  "duration": 80,
+  "note": "Rakshasa：多级代理工具，自有加密协议 TCP 长连接，固定帧头/块大小，周期 keepalive（闭源，协议驱动）"
+}

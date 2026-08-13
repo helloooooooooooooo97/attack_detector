@@ -1,0 +1,15 @@
+{
+  "name": "ngrok",
+  "description": "Ngrok 真实客户端（arm64 官方二进制）连接本地 rendezvous：TLS1.3 + 固定 SNI connect.ngrok-agent.com（无 authtoken，握手后认证失败属预期）",
+  "image": "behinder-lab",
+  "duration": 45,
+  "capture_filter": "tcp port 443",
+  "probe_args": "-json -ja3=false -idle 15 -scenario ngrok -debug",
+  "expected": [
+    {
+      "event": "ngrok.agent_tls",
+      "min_count": 3
+    }
+  ],
+  "negative": false
+}

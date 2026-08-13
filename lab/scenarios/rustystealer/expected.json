@@ -1,0 +1,10 @@
+{
+  "description": "rustystealer 金标准",
+  "events": [
+    {
+      "event": "rustystealer.exfil_burst",
+      "min_count": 2
+    }
+  ],
+  "features_note": "HTTPS POST 短突发；上行（3-5KB）显著大于下行；固定 SNI c2.rustystealer.local；加密二进制载荷"
+}

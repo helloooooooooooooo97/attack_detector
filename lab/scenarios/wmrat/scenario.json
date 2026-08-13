@@ -1,0 +1,15 @@
+{
+  "name": "wmrat",
+  "description": "蔓灵花组织远控木马（rat，协议驱动仿真）",
+  "image": "behinder-lab",
+  "duration": 73,
+  "capture_filter": "tcp port 8088",
+  "probe_args": "-json -ja3=false -idle 15 -scenario wmrat -debug",
+  "expected": [
+    {
+      "event": "wmrat.beacon",
+      "min_count": 2
+    }
+  ],
+  "negative": false
+}

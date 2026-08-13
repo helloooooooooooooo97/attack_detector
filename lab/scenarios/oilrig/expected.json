@@ -1,0 +1,10 @@
+{
+  "description": "oilrig 金标准（apt 类）",
+  "events": [
+    {
+      "event": "oilrig.beacon",
+      "min_count": 2
+    }
+  ],
+  "features_note": "OilRig（闭源，PowerShell 后门 HTTP(S) 周期回连 + DNS 隧道备用，协议驱动仿真）"
+}

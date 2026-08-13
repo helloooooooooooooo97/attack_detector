@@ -1,0 +1,7 @@
+{
+  "description": "natpass 金标准（文章 id=170）",
+  "events": [
+    {"event": "natpass.handshake", "min_count": 1}
+  ],
+  "features_note": "非 TLS；首包 protobuf 握手（~86B+，含 remote/server）；周期 keepalive"
+}

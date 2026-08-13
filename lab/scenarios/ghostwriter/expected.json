@@ -1,0 +1,10 @@
+{
+  "description": "ghostwriter 金标准（apt 类）",
+  "events": [
+    {
+      "event": "ghostwriter.poll",
+      "min_count": 2
+    }
+  ],
+  "features_note": "Ghostwriter（闭源，借道云存储 HTTPS 加密 C2，周期轮询，载荷伪装文件，协议驱动仿真）"
+}

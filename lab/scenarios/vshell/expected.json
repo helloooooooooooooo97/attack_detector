@@ -1,0 +1,11 @@
+{
+  "description": "vshell 金标准",
+  "events": [
+    {
+      "event": "vshell.heartbeat",
+      "min_count": 1
+    }
+  ],
+  "features_note": "TCP 长连接；10s 固定心跳小包（40-100B）；VKey 认证；6B 架构标识+34B IP 声明",
+  "expected": null
+}

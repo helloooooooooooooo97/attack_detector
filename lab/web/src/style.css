@@ -1,0 +1,67 @@
+:root {
+  --bg: #0f1420;
+  --card: #171e2e;
+  --line: #26314a;
+  --text: #e6ebf5;
+  --muted: #8b96ad;
+  --ok: #27ae60;
+  --todo: #8b96ad;
+  --acc: #2f80ed;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text);
+  font: 14px/1.65 -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; }
+header { padding: 32px 40px 20px; border-bottom: 1px solid var(--line); }
+header h1 { margin: 0; font-size: 26px; }
+header p { color: var(--muted); max-width: 960px; }
+.nav { margin-top: 14px; display: flex; gap: 8px; }
+.nav button { background: var(--card); color: var(--text); border: 1px solid var(--line);
+  border-radius: 8px; padding: 8px 18px; cursor: pointer; font-size: 14px; }
+.nav button.active { background: var(--acc); border-color: var(--acc); color: #fff; }
+main { padding: 24px 40px 60px; max-width: 1280px; }
+h2 { margin: 36px 0 12px; font-size: 20px; border-left: 4px solid var(--acc); padding-left: 10px; }
+.filters button { background: var(--card); color: var(--text); border: 1px solid var(--line);
+  border-radius: 6px; padding: 6px 14px; margin: 0 6px 8px 0; cursor: pointer; }
+.filters button.active { background: var(--acc); border-color: var(--acc); }
+table { width: 100%; border-collapse: collapse; background: var(--card); border-radius: 10px; overflow: hidden; }
+th, td { padding: 9px 12px; text-align: left; border-bottom: 1px solid var(--line); font-size: 13px; }
+th { background: #1b2336; color: var(--muted); }
+.badge { font-size: 11px; padding: 2px 8px; border-radius: 10px; }
+.badge.ok { background: rgba(39,174,96,.15); color: var(--ok); }
+.badge.todo { background: rgba(139,150,173,.12); color: var(--todo); }
+.fp-badge { display: inline-block; font-size: 10px; padding: 1px 6px; border-radius: 8px;
+  margin-right: 6px; vertical-align: 1px; white-space: nowrap; }
+.fp-badge.lab { background: rgba(39,174,96,.15); color: var(--ok); }
+.fp-badge.pub { background: rgba(139,150,173,.12); color: var(--todo); }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+  padding: 18px 22px; margin: 14px 0; }
+.card h3 { margin: 0 0 10px; }
+.card .meta { color: var(--muted); font-size: 12px; margin-bottom: 8px; }
+.card h4 { margin: 14px 0 6px; color: var(--acc); font-size: 14px; }
+.card ul { margin: 4px 0 8px; padding-left: 20px; }
+.card .rule { background: #101624; border: 1px solid var(--line); border-radius: 8px;
+  padding: 8px 12px; font-family: ui-monospace, Menlo, monospace; font-size: 12px; color: #9fd8ff; }
+.charts { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 12px; }
+.chart { background: #121826; border: 1px solid var(--line); border-radius: 10px; padding: 10px; }
+.chart img { max-width: 520px; width: 100%; height: auto; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 14px; }
+.grid .card { margin: 0; }
+.ac-stats { display: flex; flex-wrap: wrap; gap: 10px; margin: 8px 0 16px; }
+.ac-stat { background: var(--card); border: 1px solid var(--line); border-radius: 10px;
+  padding: 10px 18px; min-width: 96px; }
+.ac-stat b { display: block; font-size: 22px; color: var(--acc); }
+.ac-stat span { font-size: 12px; color: var(--muted); }
+.ac-stat.muted b { color: var(--muted); font-size: 16px; }
+.filters select, .ac-search { background: var(--card); color: var(--text);
+  border: 1px solid var(--line); border-radius: 6px; padding: 6px 10px; margin: 0 6px 8px 0; }
+.ac-table td { font-size: 12px; }
+.ac-time { color: var(--muted); white-space: nowrap; font-family: ui-monospace, Menlo, monospace; }
+.ac-event { color: var(--acc); font-family: ui-monospace, Menlo, monospace; }
+.ac-feats { color: var(--muted); max-width: 420px; }
+.badge.cat-webshell { background: rgba(47,128,237,.15); color: var(--acc); }
+.badge.cat-c2 { background: rgba(235,87,87,.15); color: #eb5757; }
+.badge.cat-tunnel { background: rgba(242,153,74,.15); color: #f2994a; }
+.badge.cat-rat { background: rgba(155,89,182,.15); color: #9b59b6; }
+.badge.cat-apt { background: rgba(235,87,87,.15); color: #eb5757; }
+.badge.cat-system { background: rgba(139,150,173,.15); color: var(--todo); }
+footer { color: var(--muted); padding: 20px 40px; border-top: 1px solid var(--line); font-size: 12px; }

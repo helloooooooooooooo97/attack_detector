@@ -1,0 +1,7 @@
+{
+  "description": "暴力破解/扫描 金标准（通用攻击行为，非工具）",
+  "events": [
+    {"event": "bruteforce.conn_burst", "min_count": 1}
+  ],
+  "features_note": "A→B 同一端口在 10s 窗口内 ≥25 条短小连接（时长<2s、载荷<1KB）；SSH 登录爆破/HTTP 登录爆破/端口扫描（SYN sweep）均可命中"
+}

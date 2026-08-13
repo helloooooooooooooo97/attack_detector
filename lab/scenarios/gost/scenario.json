@@ -1,0 +1,15 @@
+{
+  "name": "gost",
+  "description": "gost v2.12 隧道（websocket relay + keepalive）",
+  "image": "behinder-lab",
+  "duration": 100,
+  "capture_filter": "tcp port 10080",
+  "probe_args": "-json -ja3=false -idle 12 -scenario gost -debug",
+  "expected": [
+    {
+      "event": "gost.tunnel_relay",
+      "min_count": 1
+    }
+  ],
+  "negative": false
+}

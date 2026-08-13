@@ -1,0 +1,15 @@
+{
+  "name": "vagent",
+  "description": "注入型内存马加密通信（webshell，协议驱动仿真）",
+  "image": "behinder-lab",
+  "duration": 92,
+  "capture_filter": "tcp port 8460",
+  "probe_args": "-json -ja3=false -idle 15 -scenario vagent -debug",
+  "expected": [
+    {
+      "event": "vagent.heartbeat",
+      "min_count": 1
+    }
+  ],
+  "negative": false
+}

@@ -1,0 +1,10 @@
+{
+  "description": "donot 金标准（apt 类）",
+  "events": [
+    {
+      "event": "donot.c2_phase",
+      "min_count": 1
+    }
+  ],
+  "features_note": "Donot（闭源，多阶段 HTTP(S) 通信，RC4 等加密载荷，URL/UA 随阶段变化，多阶段协议驱动仿真）"
+}

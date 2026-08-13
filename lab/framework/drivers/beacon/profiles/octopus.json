@@ -1,0 +1,30 @@
+{
+  "name": "octopus",
+  "transport": "http",
+  "host": "127.0.0.1",
+  "port": 8084,
+  "method": "POST",
+  "path": "/api/v1/beacon",
+  "params": [
+    [
+      "data",
+      "b64"
+    ]
+  ],
+  "headers": {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+  },
+  "interval": 15,
+  "jitter": 0.2,
+  "req_size": [
+    300,
+    700
+  ],
+  "resp_size": [
+    300,
+    700
+  ],
+  "keep_alive": false,
+  "duration": 70,
+  "note": "Go C2，多协议通信（PowerShell agent 仅 Windows，HTTP beacon + 加密 JSON 载荷，协议驱动仿真）"
+}

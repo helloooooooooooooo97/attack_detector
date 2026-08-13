@@ -1,0 +1,7 @@
+{
+  "description": "AdaptixC2 金标准（文章 id=202，C2 类）",
+  "events": [
+    {"event": "adaptix.checkin", "min_count": 2}
+  ],
+  "features_note": "非 TLS HTTP 单端点短流；POST /checkin + RC4 加密载荷（base64 参数 v）；周期 checkin（实验室 8s±20%）；无心跳长连接"
+}

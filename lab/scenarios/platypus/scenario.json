@@ -1,0 +1,12 @@
+{
+  "name": "platypus",
+  "description": "Platypus v1.5 反向 Shell 管理器（TLS + 周期 RPC/心跳）",
+  "image": "behinder-lab",
+  "duration": 90,
+  "capture_filter": "tcp port 13338",
+  "probe_args": "-json -ja3=false -idle 15 -scenario platypus",
+  "expected": [
+    {"event": "platypus.link", "min_count": 1}
+  ],
+  "negative": false
+}

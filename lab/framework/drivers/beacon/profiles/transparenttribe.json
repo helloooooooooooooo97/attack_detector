@@ -1,0 +1,17 @@
+{
+  "name": "transparenttribe",
+  "transport": "https",
+  "host": "api.telegramtt.local",
+  "port": 8449,
+  "method": "GET",
+  "path": "/bot7890123456:AAFAKE/getUpdates",
+  "params": [["offset", "none"], ["timeout", "none"]],
+  "headers": {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/118.0 Safari/537.36"},
+  "interval": 10.0,
+  "jitter": 0.1,
+  "req_size": [300, 500],
+  "resp_size": [800, 1500],
+  "keep_alive": false,
+  "duration": 60,
+  "note": "摩诃草 TransparentTribe：C2 借道 Telegram/云服务 HTTPS API，短轮询节奏，载荷藏在消息文本（闭源，协议驱动）"
+}

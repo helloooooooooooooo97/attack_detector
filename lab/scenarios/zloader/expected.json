@@ -1,0 +1,10 @@
+{
+  "description": "zloader 金标准（rat 类）",
+  "events": [
+    {
+      "event": "zloader.beacon",
+      "min_count": 2
+    }
+  ],
+  "features_note": "银行木马家族（闭源，HTTPS 周期 C2 心跳 + 模块下载，响应显著大于请求，协议驱动仿真）"
+}

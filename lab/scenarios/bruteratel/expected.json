@@ -1,0 +1,7 @@
+{
+  "description": "Brute Ratel C4 金标准（文章 id=17，C2 类）",
+  "events": [
+    {"event": "bruteratel.beacon", "min_count": 2}
+  ],
+  "features_note": "HTTPS POST 短流 beacon；固定 SNI c4-bruteratel.local；载荷 profile 可塑（AES/RSA 加密）；默认 ~35-60s 周期（实验室 20s）；无长连接"
+}

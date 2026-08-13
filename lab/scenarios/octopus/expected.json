@@ -1,0 +1,10 @@
+{
+  "description": "octopus 金标准（c2 类）",
+  "events": [
+    {
+      "event": "octopus.beacon",
+      "min_count": 2
+    }
+  ],
+  "features_note": "Go C2，多协议通信（PowerShell agent 仅 Windows，HTTP beacon + 加密 JSON 载荷，协议驱动仿真）"
+}

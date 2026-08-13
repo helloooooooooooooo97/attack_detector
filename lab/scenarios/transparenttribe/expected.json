@@ -1,0 +1,7 @@
+{
+  "description": "摩诃草 TransparentTribe 金标准（文章 id=177，APT 类）",
+  "events": [
+    {"event": "transparenttribe.poll", "min_count": 2}
+  ],
+  "features_note": "HTTPS 借道 Telegram/云服务 API；固定 SNI api.telegramtt.local；GET /bot<token>/getUpdates 短轮询；响应（消息文本）明显大于请求；实验室周期 10s±10%"
+}

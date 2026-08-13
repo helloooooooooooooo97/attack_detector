@@ -1,0 +1,10 @@
+{
+  "description": "fatalrat 金标准（rat 类）",
+  "events": [
+    {
+      "event": "fatalrat.beacon",
+      "min_count": 2
+    }
+  ],
+  "features_note": "针对中国的远控木马（闭源，HTTP 短流周期回连，心跳间隔稳定，协议驱动仿真）"
+}

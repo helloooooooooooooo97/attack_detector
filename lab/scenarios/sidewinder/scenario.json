@@ -1,0 +1,15 @@
+{
+  "name": "sidewinder",
+  "description": "响尾蛇 APT（apt，协议驱动仿真）",
+  "image": "behinder-lab",
+  "duration": 92,
+  "capture_filter": "tcp port 8092 or tcp port 8463",
+  "probe_args": "-json -ja3=false -idle 15 -scenario sidewinder -debug",
+  "expected": [
+    {
+      "event": "sidewinder.c2_phase",
+      "min_count": 1
+    }
+  ],
+  "negative": false
+}

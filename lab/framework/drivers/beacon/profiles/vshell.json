@@ -1,0 +1,13 @@
+{
+  "name": "vshell",
+  "transport": "tcp",
+  "host": "127.0.0.1",
+  "port": 8457,
+  "mode": "tcp_stream",
+  "frame": {"header_len": 8, "magic": "5653484C"},
+  "interval": 10.0,
+  "jitter": 0.1,
+  "req_size": [40, 100],
+  "duration": 70,
+  "note": "Vshell：已停更停发授权的红队 RAT，10s 固定心跳，6B 架构标识+34B IP 声明，VKey 认证（无官方二进制，协议驱动仿真）"
+}

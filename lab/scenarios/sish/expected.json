@@ -1,0 +1,7 @@
+{
+  "description": "sish 金标准（文章 id=104，隧道类）",
+  "events": [
+    {"event": "sish.ssh_tunnel", "min_count": 1}
+  ],
+  "features_note": "非 TLS 长连接（SSH 自加密）；双向每 ~5s 28/52B 保活小包；转发端口由服务端动态绑定"
+}

@@ -1,0 +1,10 @@
+{
+  "description": "tristealer 金标准",
+  "events": [
+    {
+      "event": "tristealer.exfil_burst",
+      "min_count": 2
+    }
+  ],
+  "features_note": "非 TLS HTTP POST 短突发；上行（2.5-4KB）显著大于下行（50-150B）；无固定心跳；突发后 20s 空窗"
+}

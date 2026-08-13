@@ -1,0 +1,12 @@
+{
+  "name": "weevely",
+  "description": "Weevely PHP webshell（交互式命令会话，非 TLS 短流）",
+  "image": "behinder-lab",
+  "duration": 100,
+  "capture_filter": "tcp port 8080",
+  "probe_args": "-json -ja3=false -idle 10 -scenario weevely",
+  "expected": [
+    {"event": "weevely.interactive_shell", "min_count": 1}
+  ],
+  "negative": false
+}

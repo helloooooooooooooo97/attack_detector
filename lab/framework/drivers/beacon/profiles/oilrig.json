@@ -1,0 +1,30 @@
+{
+  "name": "oilrig",
+  "transport": "http",
+  "host": "127.0.0.1",
+  "port": 8093,
+  "method": "POST",
+  "path": "/ps/run",
+  "params": [
+    [
+      "data",
+      "b64"
+    ]
+  ],
+  "headers": {
+    "User-Agent": "Mozilla/5.0 (Windows NT 6.1; Win64; x64)"
+  },
+  "interval": 18,
+  "jitter": 0.2,
+  "req_size": [
+    400,
+    800
+  ],
+  "resp_size": [
+    200,
+    500
+  ],
+  "keep_alive": false,
+  "duration": 79,
+  "note": "OilRig（闭源，PowerShell 后门 HTTP(S) 周期回连 + DNS 隧道备用，协议驱动仿真）"
+}

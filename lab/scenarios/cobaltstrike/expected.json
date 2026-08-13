@@ -1,0 +1,7 @@
+{
+  "description": "Cobalt Strike 金标准（文章 id=3，C2 类；beacon 协议字节兼容实现）",
+  "events": [
+    {"event": "cobaltstrike.beacon_checkin", "min_count": 2}
+  ],
+  "features_note": "非 TLS HTTP 短流；GET /load + 超长 Cookie（RSA 加密 metadata ~440B base64）；响应 200 + 固定 32B 加密体（AES+HMAC）；固定 MSIE9 UA；周期轮询"
+}

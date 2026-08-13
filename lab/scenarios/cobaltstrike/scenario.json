@@ -1,0 +1,15 @@
+{
+  "name": "cobaltstrike",
+  "description": "Cobalt Strike beacon 协议（geacon Go 实现 + 协议级 fake teamserver，默认 HTTP profile，3s 轮询）",
+  "image": "behinder-lab",
+  "duration": 60,
+  "capture_filter": "tcp port 8080",
+  "probe_args": "-json -ja3=false -idle 15 -scenario cobaltstrike -debug",
+  "expected": [
+    {
+      "event": "cobaltstrike.beacon_checkin",
+      "min_count": 2
+    }
+  ],
+  "negative": false
+}

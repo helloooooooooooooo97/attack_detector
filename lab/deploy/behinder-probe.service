@@ -1,0 +1,22 @@
+[Unit]
+Description=TFLab encrypted-traffic probe (mirror/SPAN sensor)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+# 监控网卡：交换机镜像口，只 up 不配 IP（由 install_probe.sh 写入实际网卡名）
+ExecStart=/usr/local/bin/behinder-probe -i @PROBE_IFACE@ -json -ja3=false -idle 30 -window 60 -max-flows 100000
+Restart=always
+RestartSec=5
+# 告警输出：默认进 journal；如需落盘改为
+#   StandardOutput=append:/var/log/tflab/alerts.jsonl
+StandardOutput=journal
+StandardError=journal
+# AF_PACKET 原始套接字只需 CAP_NET_RAW
+CapabilityBoundingSet=CAP_NET_RAW
+AmbientCapabilities=CAP_NET_RAW
+NoNewPrivileges=false
+
+[Install]
+WantedBy=multi-user.target

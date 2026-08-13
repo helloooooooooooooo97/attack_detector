@@ -1,0 +1,30 @@
+{
+  "name": "vagent",
+  "transport": "https",
+  "host": "vagent-c2.local",
+  "port": 8460,
+  "method": "POST",
+  "path": "/vagent/check",
+  "params": [
+    [
+      "data",
+      "b64"
+    ]
+  ],
+  "headers": {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+  },
+  "interval": 15,
+  "jitter": 0.2,
+  "req_size": [
+    300,
+    600
+  ],
+  "resp_size": [
+    100,
+    300
+  ],
+  "keep_alive": true,
+  "duration": 80,
+  "note": "注入型内存马加密通信（闭源，HTTPS 长连接周期小包心跳，协议驱动仿真）"
+}

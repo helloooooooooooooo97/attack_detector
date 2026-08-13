@@ -1,0 +1,10 @@
+{
+  "description": "perfspyrat 金标准（rat 类）",
+  "events": [
+    {
+      "event": "perfspyrat.beacon",
+      "min_count": 2
+    }
+  ],
+  "features_note": "海莲花远控木马（闭源，HTTP 周期回连，短流节奏固定，协议驱动仿真）"
+}

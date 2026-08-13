@@ -1,0 +1,5 @@
+# Load-test image: behinder-lab + iproute2 (veth) + tcpreplay (traffic pump).
+FROM behinder-lab
+RUN apt-get update -qq \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y -qq iproute2 tcpreplay procps \
+    && rm -rf /var/lib/apt/lists/*

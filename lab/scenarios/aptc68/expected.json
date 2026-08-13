@@ -1,0 +1,10 @@
+{
+  "description": "aptc68 金标准（apt 类）",
+  "events": [
+    {
+      "event": "aptc68.beacon",
+      "min_count": 2
+    }
+  ],
+  "features_note": "寄生虫 APT-C-68（闭源，多阶段投递 + HTTPS 加密回连周期心跳，协议驱动仿真）"
+}

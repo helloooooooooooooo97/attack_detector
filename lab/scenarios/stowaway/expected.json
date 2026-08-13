@@ -1,0 +1,7 @@
+{
+  "description": "Stowaway 金标准（文章 id=203）",
+  "events": [
+    {"event": "stowaway.auth_token_handshake", "min_count": 1}
+  ],
+  "features_note": "非 TLS；首包 16B AuthToken + 回显 16B（1s 内）；AES-256-GCM 帧 + 单向心跳"
+}

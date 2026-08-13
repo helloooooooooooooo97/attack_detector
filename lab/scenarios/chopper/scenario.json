@@ -1,0 +1,15 @@
+{
+  "name": "chopper",
+  "description": "菜刀 China Chopper 一句话 webshell（协议驱动：z0/z1 参数 + base64 eval 载荷，明文 HTTP 短流）",
+  "image": "behinder-lab",
+  "duration": 60,
+  "capture_filter": "tcp port 8080",
+  "probe_args": "-json -ja3=false -idle 15 -scenario chopper -debug",
+  "expected": [
+    {
+      "event": "chopper.eval_flow",
+      "min_count": 3
+    }
+  ],
+  "negative": false
+}

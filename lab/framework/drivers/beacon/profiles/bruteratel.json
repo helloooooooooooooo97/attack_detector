@@ -1,0 +1,17 @@
+{
+  "name": "bruteratel",
+  "transport": "https",
+  "host": "c4-bruteratel.local",
+  "port": 8446,
+  "method": "POST",
+  "path": "/c4/checkin",
+  "params": [["k", "b64"]],
+  "headers": {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:115.0) Gecko/20100101 Firefox/115.0"},
+  "interval": 20.0,
+  "jitter": 0.15,
+  "req_size": [600, 1000],
+  "resp_size": [150, 350],
+  "keep_alive": false,
+  "duration": 80,
+  "note": "Brute Ratel C4 BADGER：闭源商业框架（agent 仅 Windows），HTTP(S) 载荷 profile 可塑，默认 ~35-60s 周期，实验室 20s"
+}
