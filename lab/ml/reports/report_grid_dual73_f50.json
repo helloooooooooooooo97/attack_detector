@@ -1,0 +1,497 @@
+{
+  "dataset": {
+    "n": 6959,
+    "malicious": 2747,
+    "normal": 4212
+  },
+  "config": {
+    "variant": "flat",
+    "h_cols": 4,
+    "d_model": 64,
+    "layers": 2,
+    "seed": 42,
+    "group_plan": "coarse",
+    "dcn": false,
+    "dual": true
+  },
+  "params": 101299,
+  "random_split": {
+    "fixed_0.5": {
+      "recall": 0.9927360774818402,
+      "precision": 1.0,
+      "f1": 0.9963547995139732,
+      "auroc": 0.9983027860361051,
+      "auprc": 0.998746183995815,
+      "specificity": 1.0,
+      "n": 1045,
+      "tp": 410,
+      "fp": 0,
+      "fn": 3,
+      "tn": 632
+    },
+    "tuned": {
+      "recall": 0.9951573849878934,
+      "precision": 1.0,
+      "f1": 0.9975728155339806,
+      "auroc": 0.9983027860361051,
+      "auprc": 0.998746183995815,
+      "specificity": 1.0,
+      "n": 1045,
+      "tp": 411,
+      "fp": 0,
+      "fn": 2,
+      "tn": 632
+    }
+  },
+  "random_split_per_tool": [
+    {
+      "tool": "normal",
+      "recall": 1.0,
+      "n": 632,
+      "fp": 0
+    },
+    {
+      "tool": "abptts",
+      "recall": 1.0,
+      "n": 3,
+      "tp": 3
+    },
+    {
+      "tool": "antsword",
+      "recall": 1.0,
+      "n": 1,
+      "tp": 1
+    },
+    {
+      "tool": "apt29",
+      "recall": 1.0,
+      "n": 2,
+      "tp": 2
+    },
+    {
+      "tool": "aptc68",
+      "recall": 1.0,
+      "n": 3,
+      "tp": 3
+    },
+    {
+      "tool": "badnews",
+      "recall": 1.0,
+      "n": 2,
+      "tp": 2
+    },
+    {
+      "tool": "behinder",
+      "recall": 0.0,
+      "n": 1,
+      "tp": 0
+    },
+    {
+      "tool": "bruteforce",
+      "recall": 1.0,
+      "n": 6,
+      "tp": 6
+    },
+    {
+      "tool": "bruteforce_http",
+      "recall": 1.0,
+      "n": 72,
+      "tp": 72
+    },
+    {
+      "tool": "bruteforce_scan",
+      "recall": 1.0,
+      "n": 226,
+      "tp": 226
+    },
+    {
+      "tool": "bruteforce_ssh",
+      "recall": 1.0,
+      "n": 68,
+      "tp": 68
+    },
+    {
+      "tool": "bruteratel",
+      "recall": 1.0,
+      "n": 1,
+      "tp": 1
+    },
+    {
+      "tool": "chopper",
+      "recall": 1.0,
+      "n": 2,
+      "tp": 2
+    },
+    {
+      "tool": "cobaltstrike",
+      "recall": 1.0,
+      "n": 1,
+      "tp": 1
+    },
+    {
+      "tool": "covenant",
+      "recall": 0.0,
+      "n": 1,
+      "tp": 0
+    },
+    {
+      "tool": "donot",
+      "recall": 1.0,
+      "n": 3,
+      "tp": 3
+    },
+    {
+      "tool": "godzilla",
+      "recall": 1.0,
+      "n": 1,
+      "tp": 1
+    },
+    {
+      "tool": "hemao",
+      "recall": 1.0,
+      "n": 1,
+      "tp": 1
+    },
+    {
+      "tool": "ksrat",
+      "recall": 1.0,
+      "n": 2,
+      "tp": 2
+    },
+    {
+      "tool": "loki",
+      "recall": 1.0,
+      "n": 1,
+      "tp": 1
+    },
+    {
+      "tool": "manlinghua",
+      "recall": 1.0,
+      "n": 1,
+      "tp": 1
+    },
+    {
+      "tool": "metasploit",
+      "recall": 1.0,
+      "n": 11,
+      "tp": 11
+    },
+    {
+      "tool": "ngrok",
+      "recall": 1.0,
+      "n": 1,
+      "tp": 1
+    },
+    {
+      "tool": "platypus",
+      "recall": 1.0,
+      "n": 1,
+      "tp": 1
+    },
+    {
+      "tool": "sidewinder",
+      "recall": 1.0,
+      "n": 1,
+      "tp": 1
+    },
+    {
+      "tool": "weevely",
+      "recall": 1.0,
+      "n": 1,
+      "tp": 1
+    }
+  ],
+  "scenario_split": {
+    "recall": 0.8998907899526757,
+    "precision": 0.9991915925626516,
+    "f1": 0.9469450296877993,
+    "specificity": 0.9993670886075949,
+    "auroc": 0.9914662865130598,
+    "n": 5907,
+    "tp": 2472,
+    "fp": 2,
+    "fn": 275,
+    "tn": 3158,
+    "k": 5,
+    "fixed_0.5": {
+      "recall": 0.9515835456862032,
+      "precision": 0.9988536492166603,
+      "f1": 0.9746457867263236,
+      "specificity": 0.9990506329113924,
+      "tp": 2614,
+      "fp": 3,
+      "fn": 133,
+      "tn": 3157
+    },
+    "per_tool": {
+      "close": {
+        "n": 5,
+        "tp": 5
+      },
+      "donot": {
+        "n": 20,
+        "tp": 18
+      },
+      "frp": {
+        "n": 1,
+        "tp": 0
+      },
+      "hemao": {
+        "n": 2,
+        "tp": 2
+      },
+      "merlin": {
+        "n": 2,
+        "tp": 0
+      },
+      "metasploit": {
+        "n": 59,
+        "tp": 4
+      },
+      "natpass": {
+        "n": 1,
+        "tp": 0
+      },
+      "ngrok": {
+        "n": 3,
+        "tp": 2
+      },
+      "octopus": {
+        "n": 3,
+        "tp": 3
+      },
+      "rustystealer": {
+        "n": 6,
+        "tp": 6
+      },
+      "simayrat": {
+        "n": 2,
+        "tp": 1
+      },
+      "sish2": {
+        "n": 1,
+        "tp": 0
+      },
+      "sparkrat": {
+        "n": 3,
+        "tp": 3
+      },
+      "yinhu": {
+        "n": 1,
+        "tp": 0
+      },
+      "antsword": {
+        "n": 12,
+        "tp": 12
+      },
+      "bruteforce": {
+        "n": 40,
+        "tp": 0
+      },
+      "chopper": {
+        "n": 5,
+        "tp": 3
+      },
+      "cobaltstrike": {
+        "n": 8,
+        "tp": 6
+      },
+      "covenant": {
+        "n": 2,
+        "tp": 0
+      },
+      "evilox": {
+        "n": 2,
+        "tp": 2
+      },
+      "godzilla": {
+        "n": 2,
+        "tp": 0
+      },
+      "lazarus": {
+        "n": 2,
+        "tp": 2
+      },
+      "sidewinder": {
+        "n": 6,
+        "tp": 6
+      },
+      "sish": {
+        "n": 1,
+        "tp": 0
+      },
+      "suo5": {
+        "n": 6,
+        "tp": 2
+      },
+      "tristealer": {
+        "n": 8,
+        "tp": 8
+      },
+      "vshell": {
+        "n": 1,
+        "tp": 0
+      },
+      "bruteforce_ssh": {
+        "n": 450,
+        "tp": 317
+      },
+      "aptc60": {
+        "n": 12,
+        "tp": 12
+      },
+      "aptc68": {
+        "n": 13,
+        "tp": 13
+      },
+      "behinder": {
+        "n": 4,
+        "tp": 3
+      },
+      "ksrat": {
+        "n": 2,
+        "tp": 2
+      },
+      "ktlvdoor": {
+        "n": 1,
+        "tp": 0
+      },
+      "manlinghua": {
+        "n": 6,
+        "tp": 6
+      },
+      "nimplant": {
+        "n": 2,
+        "tp": 2
+      },
+      "platypus": {
+        "n": 3,
+        "tp": 3
+      },
+      "rakshasa": {
+        "n": 1,
+        "tp": 0
+      },
+      "shadowtls": {
+        "n": 4,
+        "tp": 0
+      },
+      "sliver": {
+        "n": 1,
+        "tp": 1
+      },
+      "stowaway": {
+        "n": 1,
+        "tp": 0
+      },
+      "transparenttribe": {
+        "n": 4,
+        "tp": 4
+      },
+      "abptts": {
+        "n": 14,
+        "tp": 12
+      },
+      "apt29": {
+        "n": 12,
+        "tp": 12
+      },
+      "badnews": {
+        "n": 12,
+        "tp": 12
+      },
+      "fatalrat": {
+        "n": 2,
+        "tp": 2
+      },
+      "keepalive": {
+        "n": 1,
+        "tp": 1
+      },
+      "oceanlotus": {
+        "n": 2,
+        "tp": 2
+      },
+      "oilrig": {
+        "n": 2,
+        "tp": 2
+      },
+      "perfspyrat": {
+        "n": 3,
+        "tp": 3
+      },
+      "st4": {
+        "n": 1,
+        "tp": 0
+      },
+      "wmrat": {
+        "n": 3,
+        "tp": 3
+      },
+      "xiebro": {
+        "n": 1,
+        "tp": 0
+      },
+      "bruteforce_http": {
+        "n": 450,
+        "tp": 450
+      },
+      "bruteforce_scan": {
+        "n": 1500,
+        "tp": 1500
+      },
+      "adaptix": {
+        "n": 4,
+        "tp": 4
+      },
+      "bruteratel": {
+        "n": 4,
+        "tp": 4
+      },
+      "deimos": {
+        "n": 6,
+        "tp": 0
+      },
+      "ghostwriter": {
+        "n": 2,
+        "tp": 2
+      },
+      "gost": {
+        "n": 4,
+        "tp": 4
+      },
+      "ligolo": {
+        "n": 2,
+        "tp": 1
+      },
+      "loki": {
+        "n": 2,
+        "tp": 2
+      },
+      "mythic": {
+        "n": 1,
+        "tp": 0
+      },
+      "remcos": {
+        "n": 1,
+        "tp": 0
+      },
+      "silenttrinity": {
+        "n": 1,
+        "tp": 0
+      },
+      "vagent": {
+        "n": 1,
+        "tp": 0
+      },
+      "weevely": {
+        "n": 6,
+        "tp": 6
+      },
+      "zloader": {
+        "n": 2,
+        "tp": 2
+      }
+    }
+  }
+}

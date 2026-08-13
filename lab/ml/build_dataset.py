@@ -384,6 +384,34 @@ CICFULL_NAMES = [
     "idle_min", "idle_max", "idle_mean", "idle_std",
 ]  # 76 dims, CICFlowMeter-style (bulk rate approximated as 0)
 
+# Int-feature config for the five-type architecture:
+#   flow int:  is_tls(0), has_sni(1), tls13(2), estab(14),
+#              is_http(55), method_get(56), method_post(57),
+#              keep_alive(60), resp_code_class(61)
+#   cross int: burst_1s(62), burst_5s(65), burst_60s(68),
+#              src_uniq_dports(71)  (log1p counts -> raw count bucket)
+FLOW_INT_IDX = [0, 1, 2, 14, 55, 56, 57, 60, 61]
+CROSS_INT_IDX = [62, 65, 68, 71]
+FLOW_INT_VOCAB = [2, 2, 2, 2, 2, 2, 2, 2, 6]
+CROSS_INT_VOCAB = [16, 16, 16, 16]
+
+
+def int_feature_arrays(metas):
+    """Derive integer feature tensors for the GroupNS tokenizer from the
+    73-dim meta vector (0/1 flags, response-code class, count buckets)."""
+    n = len(metas)
+    fi = np.zeros((n, len(FLOW_INT_IDX)), dtype=np.int64)
+    ci = np.zeros((n, len(CROSS_INT_IDX)), dtype=np.int64)
+    for i, m in enumerate(metas):
+        for j, idx in enumerate(FLOW_INT_IDX):
+            if idx == 61:  # resp_code_class stored as code/1000 -> 0..5
+                fi[i, j] = min(5, int(round(m[idx] * 1000)) // 100)
+            else:
+                fi[i, j] = int(round(m[idx]))
+        for j, idx in enumerate(CROSS_INT_IDX):
+            ci[i, j] = min(15, int(round(np.expm1(m[idx]))))
+    return fi, ci
+
 
 def cic_full_features(c):
     """CICFlowMeter-style full flow statistics (76 dims), using IP total
@@ -837,6 +865,11 @@ def main():
         arr_dt[i, :ln] = X_dt[i]
         arr_mask[i, :ln] = X_mask[i]
     arr_meta = np.asarray(X_meta, dtype=np.float32)
+    if len(X_meta[0]) == 73:
+        arr_fi, arr_ci = int_feature_arrays(metas)
+    else:  # non-73-dim modes have no five-type int features
+        arr_fi = np.zeros((len(metas), len(FLOW_INT_IDX)), dtype=np.int64)
+        arr_ci = np.zeros((len(metas), len(CROSS_INT_IDX)), dtype=np.int64)
     yy = np.asarray(y, dtype=np.int64)
     cic_n = ["duration", "fwd_pkts", "bwd_pkts", "fwd_bytes", "bwd_bytes",
              "fwd_len_min", "fwd_len_max", "fwd_len_mean", "fwd_len_std",
@@ -882,6 +915,8 @@ def main():
         "X_dt": torch.from_numpy(arr_dt),
         "X_mask": torch.from_numpy(arr_mask),
         "X_meta": torch.from_numpy(arr_meta),
+        "X_int_flow": torch.from_numpy(arr_fi),
+        "X_int_cross": torch.from_numpy(arr_ci),
         "y": torch.from_numpy(yy),
         "tools": tools,
         "origins": origins,
