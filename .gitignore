@@ -12,20 +12,10 @@ lab/web/dist/
 # --- macOS ---
 .DS_Store
 
-# --- lab runtime artifacts (keep only traffic pcaps) ---
-lab/data/*
-!lab/data/captures/
-lab/data/captures/*
-!lab/data/captures/*.pcap
-!lab/data/captures/rounds/
-lab/data/captures/rounds/*
-!lab/data/captures/rounds/*.pcap
-
-# GitHub 100MB single-file limit: keep oversized captures local-only
-lab/data/captures/real_traffic_sr.pcap
-lab/data/captures/real_traffic_sr2.pcap
-lab/data/captures/wenxin.pcap
-lab/data/captures/kefei.pcap
+# --- lab runtime artifacts: keep captures & datasets local-only (no large
+# files pushed to git; pcaps/datasets are regenerable or already on sr) ---
+lab/data/
+lab/ml/data/*.pt
 
 # --- misc ---
 *.log
