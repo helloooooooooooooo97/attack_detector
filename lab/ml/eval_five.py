@@ -41,8 +41,12 @@ def main():
     ap.add_argument("--dual-head", action="store_true",
                     help="add dual-style LayerNorm->Linear head on CLS, "
                          "logits summed with five head")
+    ap.add_argument("--branch", default="fd,cd,fi,ci",
+                    help="enabled branches, comma list of fd/cd/fi/ci")
     ap.add_argument("pcaps", nargs="+")
     args = ap.parse_args()
+    br = [b.strip() for b in args.branch.split(",") if b.strip()]
+    branch_mask = ("fd" in br, "cd" in br, "fi" in br, "ci" in br)
 
     model = FlowTransformerFive(d_model=args.d_model, layers=args.layers,
                                 inner_attn=not args.no_inner_attn,
@@ -50,7 +54,8 @@ def main():
                                 attn_mode=args.attn_mode,
                                 dual_cls=args.dual_cls, slim=args.slim,
                                 head_mode=args.head,
-                                dual_head=args.dual_head)
+                                dual_head=args.dual_head,
+                                branch_mask=branch_mask)
     model.load_state_dict(torch.load(args.model, weights_only=True,
                                      map_location="cpu"))
     model.eval()

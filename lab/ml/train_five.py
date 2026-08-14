@@ -59,7 +59,8 @@ def split_five(d, seed=42):
 def train_model_five(tr, va, d_model=64, layers=2, bs=512, lr=2e-3,
                      max_epochs=30, inner_attn=True, cross_attn=True,
                      attn_mode="replace", dual_cls=False, slim=False,
-                     seed=0, head_mode="mlp", dual_head=False):
+                     seed=0, head_mode="mlp", dual_head=False,
+                     branch_mask=(True, True, True, True)):
     torch.manual_seed(seed)
     raw_model = FlowTransformerFive(d_model=d_model, layers=layers,
                                     inner_attn=inner_attn,
@@ -67,7 +68,8 @@ def train_model_five(tr, va, d_model=64, layers=2, bs=512, lr=2e-3,
                                     attn_mode=attn_mode,
                                     dual_cls=dual_cls, slim=slim,
                                     head_mode=head_mode,
-                                    dual_head=dual_head).to(DEVICE)
+                                    dual_head=dual_head,
+                                    branch_mask=branch_mask).to(DEVICE)
     model = raw_model
     opt = torch.optim.AdamW(model.parameters(), lr=lr, weight_decay=1e-4)
     try:
@@ -118,7 +120,7 @@ def train_model_five(tr, va, d_model=64, layers=2, bs=512, lr=2e-3,
 def run_tool_kfold_five(d, k=5, seed=42, d_model=64, layers=2,
                         inner_attn=True, cross_attn=True, attn_mode="replace",
                         dual_cls=False, slim=False, head_mode="mlp",
-                        dual_head=False):
+                        dual_head=False, branch_mask=(True, True, True, True)):
     rng = np.random.RandomState(seed)
     tools = sorted({t for t in d["tools"] if t})
     rng.shuffle(tools)
@@ -149,7 +151,8 @@ def run_tool_kfold_five(d, k=5, seed=42, d_model=64, layers=2,
                                  inner_attn=inner_attn, cross_attn=cross_attn,
                                  attn_mode=attn_mode, dual_cls=dual_cls,
                                  slim=slim, head_mode=head_mode,
-                                 dual_head=dual_head)
+                                 dual_head=dual_head,
+                                 branch_mask=branch_mask)
         te = sub(test)
         m = eval_split(model, te, te["y"])
         th = tune_threshold(model, sub(val), sub(val)["y"])
@@ -215,6 +218,8 @@ def main():
                     help="RNG seed for A split / B k-fold / init")
     ap.add_argument("--data", default=DATA,
                     help="dataset.pt path (default ml/data/dataset.pt)")
+    ap.add_argument("--branch", default="fd,cd,fi,ci",
+                    help="enabled branches, comma list of fd/cd/fi/ci")
     ap.add_argument("--head", choices=["mlp", "mlp_ln", "linear"],
                     default="mlp",
                     help="fusion head: mlp, mlp_ln (LayerNorm before final "
@@ -225,6 +230,8 @@ def main():
     args = ap.parse_args()
     inner_attn = not args.no_inner_attn
     cross_attn = not args.no_cross_attn
+    br = [b.strip() for b in args.branch.split(",") if b.strip()]
+    branch_mask = ("fd" in br, "cd" in br, "fi" in br, "ci" in br)
 
     d = torch.load(args.data, weights_only=False)
     for k in ("X_dir", "X_sz", "X_dt", "X_mask", "X_meta",
@@ -245,7 +252,8 @@ def main():
                              inner_attn=inner_attn, cross_attn=cross_attn,
                              attn_mode=args.attn_mode, dual_cls=args.dual_cls,
                              slim=args.slim, seed=args.seed,
-                             head_mode=args.head, dual_head=args.dual_head)
+                             head_mode=args.head, dual_head=args.dual_head,
+                             branch_mask=branch_mask)
     torch.save(model.state_dict(),
                os.path.join(MODEL_DIR, f"flow_transformer_five_{args.tag}.pt"))
     report["params"] = sum(p.numel() for p in model.parameters())
@@ -262,7 +270,8 @@ def main():
         d, d_model=args.d_model, layers=args.layers,
         inner_attn=inner_attn, cross_attn=cross_attn,
         attn_mode=args.attn_mode, dual_cls=args.dual_cls, slim=args.slim,
-        seed=args.seed, head_mode=args.head, dual_head=args.dual_head)
+        seed=args.seed, head_mode=args.head, dual_head=args.dual_head,
+        branch_mask=branch_mask)
     report["config"]["inner_attn"] = inner_attn
     report["config"]["cross_attn"] = cross_attn
     report["config"]["attn_mode"] = args.attn_mode
@@ -271,6 +280,7 @@ def main():
     report["config"]["seed"] = args.seed
     report["config"]["head"] = args.head
     report["config"]["dual_head"] = args.dual_head
+    report["config"]["branch"] = args.branch
     b = report["scenario_split"]
     print(f"recall={b['recall']:.4f} AUROC={b['auroc']:.4f} "
           f"fixed0.5 recall={b['fixed_0.5']['recall']:.4f}")

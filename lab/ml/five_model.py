@@ -66,7 +66,8 @@ class FlowTransformerFive(nn.Module):
     def __init__(self, d_model=64, nhead=4, layers=2, ff=128, dropout=0.1,
                  embed_dim=16, inner_attn=True, cross_attn=True,
                  attn_mode="replace", dual_cls=None, slim=False,
-                 head_mode="mlp", dual_head=False):
+                 head_mode="mlp", dual_head=False,
+                 branch_mask=(True, True, True, True)):
         # attn_mode: "replace" (attention output only, default for back-compat)
         #            "residual" (direct_pool + attended_pool per branch)
         #            "concat"   (per-branch [direct, attended] concatenated)
@@ -85,6 +86,7 @@ class FlowTransformerFive(nn.Module):
             self.meta_proj = None
             self.dcn_proj = None
         self.dual_cls = dual_cls
+        self.branch_mask = list(branch_mask)  # [fd, cd, fi, ci]
         def make_groups(groups):
             mods = []
             for g in groups:
@@ -94,14 +96,19 @@ class FlowTransformerFive(nn.Module):
                 else:
                     mods.append(DCNGroup(len(g), d_model))
             return nn.ModuleList(mods)
-        self.fd_groups = make_groups(FIVE_FD_GROUPS)
-        self.cd_groups = make_groups(FIVE_CD_GROUPS)
-        self.groupns_flow = GroupNSTokenizer(
+        self.fd_groups = (make_groups(FIVE_FD_GROUPS)
+                          if branch_mask[0] else None)
+        self.cd_groups = (make_groups(FIVE_CD_GROUPS)
+                          if branch_mask[1] else None)
+        self.groupns_flow = (GroupNSTokenizer(
             FIVE_FLOW_INT_VOCAB, FIVE_FLOW_INT_GROUP_IDS,
             embed_dim=embed_dim, d_model=d_model)
-        self.groupns_cross = GroupNSTokenizer(
+            if branch_mask[2] else None)
+        self.groupns_cross = (GroupNSTokenizer(
             FIVE_CROSS_INT_VOCAB, FIVE_CROSS_INT_GROUP_IDS,
             embed_dim=embed_dim, d_model=d_model)
+            if branch_mask[3] else None)
+        n_branch = sum(self.branch_mask)
         enc = nn.TransformerEncoderLayer(
             d_model=d_model, nhead=nhead, dim_feedforward=ff,
             dropout=dropout, batch_first=True, activation="gelu")
@@ -117,17 +124,20 @@ class FlowTransformerFive(nn.Module):
             d_model=d_model, nhead=nhead, dim_feedforward=ff,
             dropout=dropout, batch_first=True, activation="gelu")
             if cross_attn else None)
-        self.fusion_norm = nn.LayerNorm(5 * d_model)
+        self.fusion_norm = nn.LayerNorm((1 + n_branch) * d_model)
         if head_mode == "linear":
             self.five_head = nn.Sequential(
-                nn.LayerNorm(5 * d_model), nn.Linear(5 * d_model, 1))
+                nn.LayerNorm((1 + n_branch) * d_model),
+                nn.Linear((1 + n_branch) * d_model, 1))
         elif head_mode == "mlp_ln":
             self.five_head = nn.Sequential(
-                nn.Linear(5 * d_model, 128), nn.GELU(), nn.Dropout(dropout),
+                nn.Linear((1 + n_branch) * d_model, 128), nn.GELU(),
+                nn.Dropout(dropout),
                 nn.LayerNorm(128), nn.Linear(128, 1))
         else:
             self.five_head = nn.Sequential(
-                nn.Linear(5 * d_model, 128), nn.GELU(), nn.Dropout(dropout),
+                nn.Linear((1 + n_branch) * d_model, 128), nn.GELU(),
+                nn.Dropout(dropout),
                 nn.Linear(128, 1))
         self.head_mode = head_mode
         # dual-style head on the dual-enriched CLS; logits are summed with the
@@ -159,52 +169,47 @@ class FlowTransformerFive(nn.Module):
         beh = self.enc(seq, src_key_padding_mask=pad.bool())[:, 0]
         if self.dual_cls == "post":
             beh = beh + self.meta_proj(X_meta) + self.dcn_proj(X_meta)
-        fd = torch.stack(
-            [g(X_meta[:, idx]) for g, idx in zip(self.fd_groups, FIVE_FD_GROUPS)],
-            dim=1)                                   # B,7,64
-        cd = torch.stack(
-            [g(X_meta[:, idx]) for g, idx in zip(self.cd_groups, FIVE_CD_GROUPS)],
-            dim=1)                                   # B,3,64
-        fi = self.groupns_flow(X_int_flow)           # B,2,64
-        ci = self.groupns_cross(X_int_cross)         # B,2,64
-        # direct reads (before any attention) - the "bypass" path
-        beh_dir = beh
-        fd_dir = fd.mean(dim=1)                      # B,64
-        cd_dir = cd.mean(dim=1)
-        fi_dir = fi.mean(dim=1)
-        ci_dir = ci.mean(dim=1)
+        # branch tokens (enabled only), insertion-ordered: fd, cd, fi, ci
+        toks = {}
+        if self.fd_groups is not None:
+            toks["fd"] = torch.stack(
+                [g(X_meta[:, idx])
+                 for g, idx in zip(self.fd_groups, FIVE_FD_GROUPS)], dim=1)
+        if self.cd_groups is not None:
+            toks["cd"] = torch.stack(
+                [g(X_meta[:, idx])
+                 for g, idx in zip(self.cd_groups, FIVE_CD_GROUPS)], dim=1)
+        if self.groupns_flow is not None:
+            toks["fi"] = self.groupns_flow(X_int_flow)
+        if self.groupns_cross is not None:
+            toks["ci"] = self.groupns_cross(X_int_cross)
+        dirs = {k: v.mean(dim=1) for k, v in toks.items()}  # direct reads
         # stage 1: intra-branch interaction
         if self.inner_attn is not None:
-            fd = self.inner_attn(fd)
-            cd = self.inner_attn(cd)
-            fi = self.inner_attn(fi)
-            ci = self.inner_attn(ci)
-        # stage 2: inter-branch cross-attention over all 15 tokens
-        all_tok = torch.cat([beh.unsqueeze(1), fd, cd, fi, ci], dim=1)  # B,15,64
+            for k in toks:
+                toks[k] = self.inner_attn(toks[k])
+        # stage 2: inter-branch cross-attention over enabled tokens + CLS
+        all_tok = torch.cat([beh.unsqueeze(1)] + [toks[k] for k in toks], dim=1)
         if self.cross_attn is not None:
             all_tok = self.cross_attn(all_tok)
-        beh2 = all_tok[:, 0:1]
-        fd2 = all_tok[:, 1:8]
-        cd2 = all_tok[:, 8:11]
-        fi2 = all_tok[:, 11:13]
-        ci2 = all_tok[:, 13:15]
+        beh2 = all_tok[:, 0]
+        off = 1
+        att = {}
+        for k in toks:
+            n = toks[k].shape[1]
+            att[k] = all_tok[:, off:off + n].mean(dim=1)
+            off += n
         # stage 3: per-branch pooling + fusion
-        beh2 = beh2[:, 0]
-        fd2 = fd2.mean(dim=1)
-        cd2 = cd2.mean(dim=1)
-        fi2 = fi2.mean(dim=1)
-        ci2 = ci2.mean(dim=1)
         if self.attn_mode == "replace":
-            f = torch.stack([beh2, fd2, cd2, fi2, ci2], dim=1)
+            f = torch.stack([beh2] + [att[k] for k in toks], dim=1)
             five_logit = self.five_head(self.fusion_norm(f.flatten(1))).squeeze(-1)
         elif self.attn_mode == "residual":
-            f = torch.stack([beh_dir + beh2, fd_dir + fd2, cd_dir + cd2,
-                             fi_dir + fi2, ci_dir + ci2], dim=1)
+            f = torch.stack([beh + beh2] + [dirs[k] + att[k] for k in toks],
+                            dim=1)
             five_logit = self.five_head(self.fusion_norm(f.flatten(1))).squeeze(-1)
-        else:
-            # concat: head sees direct and attended views independently
-            f = torch.cat([beh_dir, beh2, fd_dir, fd2, cd_dir, cd2,
-                           fi_dir, fi2, ci_dir, ci2], dim=1)   # B,640
+        else:  # concat
+            f = torch.cat([beh, beh2] +
+                          [v for k in toks for v in (dirs[k], att[k])], dim=1)
             five_logit = self.concat_head(self.concat_norm(f)).squeeze(-1)
         if self.dual_head is not None:
             five_logit = five_logit + self.dual_head(beh).squeeze(-1)
