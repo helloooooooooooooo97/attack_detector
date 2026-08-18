@@ -30,6 +30,9 @@ HTTPF = "http" in FEATURE_GROUPS
 MULTI = "multiscale" in FEATURE_GROUPS
 SHAPE = "shape" in FEATURE_GROUPS
 JA3F = "ja3" in FEATURE_GROUPS
+LIFECYCLE = "lifecycle" in FEATURE_GROUPS
+TLSMETA = "tlsmeta" in FEATURE_GROUPS
+BURSTSHAPE = "burstshape" in FEATURE_GROUPS
 CIC_MODE = "cic39" in FEATURE_GROUPS or "cicfull" in FEATURE_GROUPS
 CIC39 = "cic39" in FEATURE_GROUPS
 CICFULL = "cicfull" in FEATURE_GROUPS
@@ -37,6 +40,7 @@ CICFULL = "cicfull" in FEATURE_GROUPS
 META_BASE = 16
 META_CIC = 39
 SHAPE_N, HTTP_N, JA3_N, HS_N, MS_N, JA3C_N = 5, 7, 2, 5, 11, 1
+LIFECYCLE_N, TLSMETA_N, BURST_N = 6, 6, 10
 
 LAB = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT_DIR = os.path.join(LAB, "data", "captures")
@@ -407,6 +411,12 @@ def int_feature_arrays(metas):
     http_off = idx if HTTPF else None
     if HTTPF:
         idx += HTTP_N
+    lifecycle_off = idx if LIFECYCLE else None
+    if LIFECYCLE:
+        idx += LIFECYCLE_N
+    tlsmeta_off = idx if TLSMETA else None
+    if TLSMETA:
+        idx += TLSMETA_N
     if JA3F:
         idx += JA3_N
     if HANDSHAKE:
@@ -416,6 +426,12 @@ def int_feature_arrays(metas):
     if http_off is not None:
         flow_int += [(http_off, 0), (http_off + 1, 0), (http_off + 2, 0),
                      (http_off + 5, 0), (http_off + 6, 1)]  # last is resp_code
+    if lifecycle_off is not None:
+        flow_int += [(lifecycle_off + 2, 0)]  # exchanges (log1p bucket)
+    if tlsmeta_off is not None:
+        flow_int += [(tlsmeta_off, 0), (tlsmeta_off + 1, 0),
+                     (tlsmeta_off + 3, 0), (tlsmeta_off + 4, 0),
+                     (tlsmeta_off + 5, 0)]
     cross_int = []
     if ms_off is not None:
         cross_int = [ms_off, ms_off + 3, ms_off + 6, ms_off + 9]
@@ -543,10 +559,16 @@ def all_meta(c):
         feats += http_features(c)
     if JA3F:
         feats += ja3_features(c)
+    if LIFECYCLE:
+        feats += lifecycle_features(c)
+    if TLSMETA:
+        feats += tlsmeta_features(c)
     if HANDSHAKE:
         feats += [0.0] * HS_N
     if MULTI:
         feats += [0.0] * MS_N
+    if BURSTSHAPE:
+        feats += [0.0] * BURST_N
     if JA3F:
         feats += [0.0] * JA3C_N
     return feats
@@ -664,6 +686,110 @@ def http_features(c):
             np.log1p(req_len), np.log1p(n_headers), keep, _http_resp_code(c)]
 
 
+def _cv(vals):
+    vals = [float(v) for v in vals]
+    if len(vals) < 2:
+        return 0.0
+    a = np.asarray(vals, dtype=float)
+    m = a.mean()
+    return float(a.std() / m) if m > 0 else 0.0
+
+
+def lifecycle_features(c):
+    """Transport-level lifecycle (no app semantics):
+    [ends_fin, ends_rst, log1p(exchanges), rst_any, fin_any, clean_close]."""
+    rows = [("C", ts, pay, fl) for ts, _p, pay, fl, *_ in c["c_meta"]]
+    rows += [("S", ts, pay, fl) for ts, _p, pay, fl, *_ in c["s_meta"]]
+    rows.sort(key=lambda r: r[1])
+    if not rows:
+        return [0.0] * LIFECYCLE_N
+    flags = [r[3] for r in rows]
+    last = flags[-1]
+    ends_fin = 1.0 if last & 0x01 else 0.0
+    ends_rst = 1.0 if last & 0x04 else 0.0
+    rst_any = 1.0 if any(x & 0x04 for x in flags) else 0.0
+    fin_any = 1.0 if any(x & 0x01 for x in flags) else 0.0
+    exchanges = 0
+    last_dir = None
+    for r in rows:
+        if r[2] > 0:
+            if r[0] != last_dir:
+                exchanges += 1
+                last_dir = r[0]
+    clean_close = 1.0 if (ends_fin and not rst_any) else 0.0
+    return [ends_fin, ends_rst, np.log1p(exchanges), rst_any, fin_any,
+            clean_close]
+
+
+def tlsmeta_features(c):
+    """TLS metadata (no app semantics):
+    [ver_class, alpn_count, log1p(hello_full_len), srv_hello, truncated,
+    hs_complete]. Truncation-robust: parses whatever bytes are available."""
+    cbuf = b"".join(p for _, p in c["c"])
+    sbuf = b"".join(p for _, p in c["s"])
+    hello_len = 0.0
+    ver_class = 0.0
+    alpn = 0
+    truncated = 0.0
+    rec = None
+    for start in range(min(len(cbuf), 64)):
+        if cbuf[start] == 0x16:
+            rlen = (int.from_bytes(cbuf[start + 3:start + 5], "big")
+                    if start + 5 <= len(cbuf) else 0)
+            avail = len(cbuf) - start
+            if rlen + 5 > avail:
+                truncated = 1.0
+            rec = cbuf[start:start + min(5 + rlen, avail)]
+            break
+    srv_hello = 1.0 if any(p and p[0] == 0x16 for _, p in c["s"]) else 0.0
+    if rec is not None:
+        hello_len = float(len(rec))
+        low = rec[1] & 0xFF if len(rec) > 1 else 0
+        if len(rec) >= 9 and rec[5] == 0x01:
+            t13 = 0.0
+            try:
+                t13 = tls13_from_ch(rec[5:])
+            except Exception:
+                pass
+            ver_class = 3.0 if t13 else (2.0 if low >= 3 else 1.0)
+            body = rec[9:]
+            try:
+                q = 34
+                if len(body) >= q + 1:
+                    q += 1 + body[q]
+                if q + 2 <= len(body):
+                    q += 2 + int.from_bytes(body[q:q + 2], "big")
+                if q + 1 <= len(body):
+                    q += 1 + body[q]
+                if q + 2 <= len(body):
+                    ext_total = int.from_bytes(body[q:q + 2], "big")
+                    q += 2
+                    end = min(q + ext_total, len(body))
+                    while q + 4 <= end:
+                        et = int.from_bytes(body[q:q + 2], "big")
+                        el = int.from_bytes(body[q + 2:q + 4], "big")
+                        q += 4
+                        if et == 0x0010 and el >= 3:
+                            d = body[q:q + el]
+                            i2 = 1
+                            while i2 < len(d) and len(d) - i2 >= 1:
+                                l2 = d[i2]
+                                i2 += 1
+                                if l2 and i2 + l2 <= len(d):
+                                    alpn += 1
+                                    i2 += l2
+                                else:
+                                    break
+                        q += el
+            except Exception:
+                pass
+    after = cbuf[len(rec):] if rec is not None else cbuf
+    hs_complete = 1.0 if (srv_hello and
+                          any(b in (0x14, 0x17) for b in after[:96])) else 0.0
+    return [ver_class, min(float(alpn), 3.0), np.log1p(hello_len),
+            srv_hello, truncated, hs_complete]
+
+
 def extra_layout():
     """Map feature-group names to their starting index in the fused meta
     vector, and return the total meta dimension."""
@@ -678,16 +804,71 @@ def extra_layout():
     if JA3F:
         off["ja3"] = idx
         idx += JA3_N
+    if LIFECYCLE:
+        off["lifecycle"] = idx
+        idx += LIFECYCLE_N
+    if TLSMETA:
+        off["tlsmeta"] = idx
+        idx += TLSMETA_N
     if HANDSHAKE:
         off["handshake"] = idx
         idx += HS_N
     if MULTI:
         off["multiscale"] = idx
         idx += MS_N
+    if BURSTSHAPE:
+        off["burstshape"] = idx
+        idx += BURST_N
     if JA3F:
         off["ja3cross"] = idx
         idx += JA3C_N
     return off, idx
+
+
+def five_group_config():
+    """Layout-aware group config for FlowTransformerFive (fd/cd dense groups
+    and fi/ci GroupNS vocab/group ids), derived from the active feature
+    groups so branch indices never misalign with the fused meta vector."""
+    off, _ = extra_layout()
+    fd = [[3, 4, 5, 6], [7, 10, 11, 12, 13], [16, 17, 18, 19, 20],
+          list(range(21, 29)), list(range(29, 41)), list(range(41, 47)),
+          list(range(47, 55))]
+    if SHAPE:
+        s = off["shape"]
+        fd.append(list(range(s, s + SHAPE_N)))
+    if HTTPF:
+        s = off["http"]
+        fd.append(list(range(s, s + HTTP_N)))
+    if JA3F:
+        s = off["ja3"]
+        fd.append(list(range(s, s + JA3_N)))
+    if LIFECYCLE:
+        s = off["lifecycle"]
+        fd.append(list(range(s, s + LIFECYCLE_N)))
+    if TLSMETA:
+        s = off["tlsmeta"]
+        fd.append(list(range(s, s + TLSMETA_N)))
+    cd = [[8, 9, 15]]
+    if MULTI:
+        s = off["multiscale"]
+        cd.append([s + 1, s + 2, s + 4, s + 5, s + 7, s + 8])
+        cd.append([s + 10])
+    if HANDSHAKE:
+        s = off["handshake"]
+        cd.append(list(range(s, s + HS_N)))
+    if BURSTSHAPE:
+        s = off["burstshape"]
+        cd.append(list(range(s, s + BURST_N)))
+    fi_vocab = [2, 2, 2, 2, 2, 2, 2, 2, 6]
+    fi_gid = [0, 0, 0, 0, 1, 1, 1, 1, 1]
+    if LIFECYCLE:
+        fi_vocab += [16]
+        fi_gid += [2]
+    if TLSMETA:
+        fi_vocab += [4, 4, 2, 2, 2]
+        fi_gid += [2, 2, 2, 2, 2]
+    return (fd, cd, fi_vocab, fi_gid,
+            list(CROSS_INT_VOCAB), [0, 0, 0, 1])
 
 
 def cross_flow_meta(flows, metas):
@@ -722,6 +903,14 @@ def cross_flow_meta(flows, metas):
             b = {1: 0, 5: 0, 10: 0, 60: 0}
             sw = {1: set(), 5: set(), 10: set(), 60: set()}
             dsts_w = {1: set(), 5: set(), 10: set(), 60: set()}
+            nb_pkts = []
+            nb_dur = []
+            nb_req = []
+            nb_resp = []
+            nb_fin = []
+            nb_iv = []
+            nb_dst = []
+            nb_dport = []
             for m in range(lo, hi):
                 if m == k:
                     continue
@@ -731,6 +920,15 @@ def cross_flow_meta(flows, metas):
                 dtg = abs(g["first"] - t)
                 if dtg > 60.0:
                     continue
+                gm = g["c_meta"] + g["s_meta"]
+                nb_pkts.append(len(gm))
+                nb_dur.append(max(0.0, (g["last"] or 0) - (g["first"] or 0)))
+                nb_req.append(sum(x[2] for x in g["c_meta"]))
+                nb_resp.append(sum(x[2] for x in g["s_meta"]))
+                nb_fin.append(1.0 if gm and gm[-1][3] & 0x01 else 0.0)
+                nb_iv.append(dtg)
+                nb_dst.append(gdst)
+                nb_dport.append(g["dport"])
                 for w in (1, 5, 10, 60):
                     if dtg <= w:
                         dsts_w[w].add(gdst)
@@ -779,6 +977,21 @@ def cross_flow_meta(flows, metas):
                     kk += 3
                 metas[i][s + 9] = np.log1p(len(src_dports))
                 metas[i][s + 10] = src_rst / src_n if src_n else 0.0
+            if BURSTSHAPE:
+                s = off["burstshape"]
+                n = len(nb_pkts)
+                metas[i][s] = _cv(nb_pkts)
+                metas[i][s + 1] = _cv(nb_dur)
+                metas[i][s + 2] = _cv(nb_req)
+                metas[i][s + 3] = _cv(nb_resp)
+                metas[i][s + 4] = _cv(nb_iv)
+                metas[i][s + 5] = float(np.mean(nb_fin)) if n else 0.0
+                n_dst = len(set(nb_dst))
+                n_dport = len(set(nb_dport))
+                metas[i][s + 6] = np.log1p(n_dst)
+                metas[i][s + 7] = np.log1p(n_dport)
+                metas[i][s + 8] = 1.0 - (n_dst / n if n else 0.0)
+                metas[i][s + 9] = 1.0 - (n_dport / n if n else 0.0)
             if JA3F:
                 s = off["ja3cross"]
                 my = _flow_ja3(f)
@@ -884,9 +1097,9 @@ def main():
         arr_dt[i, :ln] = X_dt[i]
         arr_mask[i, :ln] = X_mask[i]
     arr_meta = np.asarray(X_meta, dtype=np.float32)
-    if len(X_meta[0]) == 73:
+    if not CIC_MODE:
         arr_fi, arr_ci = int_feature_arrays(metas)
-    else:  # non-73-dim modes have no five-type int features
+    else:  # pure-CIC modes have no five-type int features
         arr_fi = np.zeros((len(metas), len(FLOW_INT_IDX)), dtype=np.int64)
         arr_ci = np.zeros((len(metas), len(CROSS_INT_IDX)), dtype=np.int64)
     yy = np.asarray(y, dtype=np.int64)

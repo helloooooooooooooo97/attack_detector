@@ -67,7 +67,10 @@ class FlowTransformerFive(nn.Module):
                  embed_dim=16, inner_attn=True, cross_attn=True,
                  attn_mode="replace", dual_cls=None, slim=False,
                  head_mode="mlp", dual_head=False,
-                 branch_mask=(True, True, True, True), meta_dim=73):
+                 branch_mask=(True, True, True, True), meta_dim=73,
+                 fd_groups_idx=None, cd_groups_idx=None,
+                 flow_int_vocab=None, flow_int_group_ids=None,
+                 cross_int_vocab=None, cross_int_group_ids=None):
         # attn_mode: "replace" (attention output only, default for back-compat)
         #            "residual" (direct_pool + attended_pool per branch)
         #            "concat"   (per-branch [direct, attended] concatenated)
@@ -88,6 +91,10 @@ class FlowTransformerFive(nn.Module):
             self.dcn_proj = None
         self.dual_cls = dual_cls
         self.branch_mask = list(branch_mask)  # [fd, cd, fi, ci]
+        fd_groups = fd_groups_idx if fd_groups_idx is not None else FIVE_FD_GROUPS
+        cd_groups = cd_groups_idx if cd_groups_idx is not None else FIVE_CD_GROUPS
+        self.fd_groups_idx = fd_groups
+        self.cd_groups_idx = cd_groups
         def make_groups(groups):
             mods = []
             for g in groups:
@@ -97,16 +104,20 @@ class FlowTransformerFive(nn.Module):
                 else:
                     mods.append(DCNGroup(len(g), d_model))
             return nn.ModuleList(mods)
-        self.fd_groups = (make_groups(FIVE_FD_GROUPS)
+        self.fd_groups = (make_groups(fd_groups)
                           if branch_mask[0] else None)
-        self.cd_groups = (make_groups(FIVE_CD_GROUPS)
+        self.cd_groups = (make_groups(cd_groups)
                           if branch_mask[1] else None)
         self.groupns_flow = (GroupNSTokenizer(
-            FIVE_FLOW_INT_VOCAB, FIVE_FLOW_INT_GROUP_IDS,
+            flow_int_vocab if flow_int_vocab is not None else FIVE_FLOW_INT_VOCAB,
+            (flow_int_group_ids if flow_int_group_ids is not None
+             else FIVE_FLOW_INT_GROUP_IDS),
             embed_dim=embed_dim, d_model=d_model)
             if branch_mask[2] else None)
         self.groupns_cross = (GroupNSTokenizer(
-            FIVE_CROSS_INT_VOCAB, FIVE_CROSS_INT_GROUP_IDS,
+            cross_int_vocab if cross_int_vocab is not None else FIVE_CROSS_INT_VOCAB,
+            (cross_int_group_ids if cross_int_group_ids is not None
+             else FIVE_CROSS_INT_GROUP_IDS),
             embed_dim=embed_dim, d_model=d_model)
             if branch_mask[3] else None)
         n_branch = sum(self.branch_mask)
@@ -181,11 +192,11 @@ class FlowTransformerFive(nn.Module):
         if self.fd_groups is not None:
             toks["fd"] = torch.stack(
                 [g(X_meta[:, idx])
-                 for g, idx in zip(self.fd_groups, FIVE_FD_GROUPS)], dim=1)
+                 for g, idx in zip(self.fd_groups, self.fd_groups_idx)], dim=1)
         if self.cd_groups is not None:
             toks["cd"] = torch.stack(
                 [g(X_meta[:, idx])
-                 for g, idx in zip(self.cd_groups, FIVE_CD_GROUPS)], dim=1)
+                 for g, idx in zip(self.cd_groups, self.cd_groups_idx)], dim=1)
         if self.groupns_flow is not None:
             toks["fi"] = self.groupns_flow(X_int_flow)
         if self.groupns_cross is not None:

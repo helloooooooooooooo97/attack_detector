@@ -54,6 +54,7 @@ def main():
         if t0 is not None:
             meta_dim = int(t0["X_meta"].shape[1])
             break
+    cfg = B.five_group_config()
     model = FlowTransformerFive(d_model=args.d_model, layers=args.layers,
                                 inner_attn=not args.no_inner_attn,
                                 cross_attn=not args.no_cross_attn,
@@ -61,7 +62,12 @@ def main():
                                 dual_cls=args.dual_cls, slim=args.slim,
                                 head_mode=args.head,
                                 dual_head=args.dual_head,
-                                branch_mask=branch_mask, meta_dim=meta_dim)
+                                branch_mask=branch_mask, meta_dim=meta_dim,
+                                fd_groups_idx=cfg[0], cd_groups_idx=cfg[1],
+                                flow_int_vocab=cfg[2],
+                                flow_int_group_ids=cfg[3],
+                                cross_int_vocab=cfg[4],
+                                cross_int_group_ids=cfg[5])
     model.load_state_dict(torch.load(args.model, weights_only=True,
                                      map_location="cpu"))
     model.eval()

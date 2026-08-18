@@ -17,6 +17,7 @@ import torch
 import torch.nn as nn
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import build_dataset as B  # noqa: E402
 from five_model import FlowTransformerFive  # noqa: E402
 from train_transformer import (  # noqa: E402
     DEVICE, eval_split, metrics, tune_threshold)
@@ -62,6 +63,7 @@ def train_model_five(tr, va, d_model=64, layers=2, bs=512, lr=2e-3,
                      seed=0, head_mode="mlp", dual_head=False,
                      branch_mask=(True, True, True, True), meta_dim=73):
     torch.manual_seed(seed)
+    cfg = B.five_group_config()
     raw_model = FlowTransformerFive(d_model=d_model, layers=layers,
                                     inner_attn=inner_attn,
                                     cross_attn=cross_attn,
@@ -70,7 +72,12 @@ def train_model_five(tr, va, d_model=64, layers=2, bs=512, lr=2e-3,
                                     head_mode=head_mode,
                                     dual_head=dual_head,
                                     branch_mask=branch_mask,
-                                    meta_dim=meta_dim).to(DEVICE)
+                                    meta_dim=meta_dim,
+                                    fd_groups_idx=cfg[0], cd_groups_idx=cfg[1],
+                                    flow_int_vocab=cfg[2],
+                                    flow_int_group_ids=cfg[3],
+                                    cross_int_vocab=cfg[4],
+                                    cross_int_group_ids=cfg[5]).to(DEVICE)
     model = raw_model
     opt = torch.optim.AdamW(model.parameters(), lr=lr, weight_decay=1e-4)
     try:
