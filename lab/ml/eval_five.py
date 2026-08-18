@@ -48,6 +48,12 @@ def main():
     br = [b.strip() for b in args.branch.split(",") if b.strip()]
     branch_mask = ("fd" in br, "cd" in br, "fi" in br, "ci" in br)
 
+    meta_dim = 73
+    for p in args.pcaps:
+        t0 = flows_to_tensors_five(B.extract_flows(p))
+        if t0 is not None:
+            meta_dim = int(t0["X_meta"].shape[1])
+            break
     model = FlowTransformerFive(d_model=args.d_model, layers=args.layers,
                                 inner_attn=not args.no_inner_attn,
                                 cross_attn=not args.no_cross_attn,
@@ -55,7 +61,7 @@ def main():
                                 dual_cls=args.dual_cls, slim=args.slim,
                                 head_mode=args.head,
                                 dual_head=args.dual_head,
-                                branch_mask=branch_mask)
+                                branch_mask=branch_mask, meta_dim=meta_dim)
     model.load_state_dict(torch.load(args.model, weights_only=True,
                                      map_location="cpu"))
     model.eval()

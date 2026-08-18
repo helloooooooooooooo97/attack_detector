@@ -67,7 +67,7 @@ class FlowTransformerFive(nn.Module):
                  embed_dim=16, inner_attn=True, cross_attn=True,
                  attn_mode="replace", dual_cls=None, slim=False,
                  head_mode="mlp", dual_head=False,
-                 branch_mask=(True, True, True, True)):
+                 branch_mask=(True, True, True, True), meta_dim=73):
         # attn_mode: "replace" (attention output only, default for back-compat)
         #            "residual" (direct_pool + attended_pool per branch)
         #            "concat"   (per-branch [direct, attended] concatenated)
@@ -79,9 +79,10 @@ class FlowTransformerFive(nn.Module):
         self.dt_emb = nn.Embedding(12, d_model)
         self.pos = nn.Parameter(torch.randn(1, B.MAX_LEN + 1, d_model) * 0.02)
         self.cls = nn.Parameter(torch.randn(d_model) * 0.02)
+        self.meta_dim = meta_dim
         if dual_cls:
-            self.meta_proj = nn.Linear(73, d_model)
-            self.dcn_proj = DCNGroup(73, d_model)
+            self.meta_proj = nn.Linear(meta_dim, d_model)
+            self.dcn_proj = DCNGroup(meta_dim, d_model)
         else:
             self.meta_proj = None
             self.dcn_proj = None
@@ -158,6 +159,12 @@ class FlowTransformerFive(nn.Module):
     def forward(self, X_dir, X_sz, X_dt, X_mask, X_meta,
                 X_int_flow, X_int_cross):
         Bn, L = X_dir.shape
+        if self.dual_cls and X_meta.shape[1] != self.meta_proj.in_features:
+            d = self.meta_proj.in_features
+            self.meta_proj = nn.Linear(X_meta.shape[1], self.meta_proj.out_features)
+            self.dcn_proj = DCNGroup(X_meta.shape[1], self.meta_proj.out_features)
+            self.meta_proj.to(X_meta.device)
+            self.dcn_proj.to(X_meta.device)
         ev = self.dir_emb(X_dir) + self.sz_emb(X_sz) + self.dt_emb(X_dt)
         cls = self.cls.unsqueeze(0).expand(Bn, -1)
         if self.dual_cls == "pre":

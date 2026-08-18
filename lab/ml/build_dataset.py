@@ -400,15 +400,34 @@ def int_feature_arrays(metas):
     """Derive integer feature tensors for the GroupNS tokenizer from the
     73-dim meta vector (0/1 flags, response-code class, count buckets)."""
     n = len(metas)
-    fi = np.zeros((n, len(FLOW_INT_IDX)), dtype=np.int64)
-    ci = np.zeros((n, len(CROSS_INT_IDX)), dtype=np.int64)
+    # indices shift when extra feature groups are enabled; compute layout
+    idx = META_BASE + META_CIC  # 55
+    if SHAPE:
+        idx += SHAPE_N
+    http_off = idx if HTTPF else None
+    if HTTPF:
+        idx += HTTP_N
+    if JA3F:
+        idx += JA3_N
+    if HANDSHAKE:
+        idx += HS_N
+    ms_off = idx if MULTI else None
+    flow_int = [(0, 0), (1, 0), (2, 0), (14, 0)]
+    if http_off is not None:
+        flow_int += [(http_off, 0), (http_off + 1, 0), (http_off + 2, 0),
+                     (http_off + 5, 0), (http_off + 6, 1)]  # last is resp_code
+    cross_int = []
+    if ms_off is not None:
+        cross_int = [ms_off, ms_off + 3, ms_off + 6, ms_off + 9]
+    fi = np.zeros((n, len(flow_int)), dtype=np.int64)
+    ci = np.zeros((n, len(cross_int)), dtype=np.int64)
     for i, m in enumerate(metas):
-        for j, idx in enumerate(FLOW_INT_IDX):
-            if idx == 61:  # resp_code_class stored as code/1000 -> 0..5
+        for j, (idx, is_code) in enumerate(flow_int):
+            if is_code:  # resp_code_class stored as code/1000 -> 0..5
                 fi[i, j] = min(5, int(round(m[idx] * 1000)) // 100)
             else:
                 fi[i, j] = int(round(m[idx]))
-        for j, idx in enumerate(CROSS_INT_IDX):
+        for j, idx in enumerate(cross_int):
             ci[i, j] = min(15, int(round(np.expm1(m[idx]))))
     return fi, ci
 
