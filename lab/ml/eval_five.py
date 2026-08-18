@@ -43,6 +43,10 @@ def main():
                          "logits summed with five head")
     ap.add_argument("--branch", default="fd,cd,fi,ci",
                     help="enabled branches, comma list of fd/cd/fi/ci")
+    ap.add_argument("--veto-synonly", action="store_true",
+                    help="zero the score of SYN-only flows (no SYN-ACK, no "
+                         "payload): mirror/probe noise is dominated by these, "
+                         "and attack flows always establish TCP")
     ap.add_argument("pcaps", nargs="+")
     args = ap.parse_args()
     br = [b.strip() for b in args.branch.split(",") if b.strip()]
@@ -80,6 +84,11 @@ def main():
         with torch.no_grad():
             logit = model(**{k: v for k, v in tens.items()})
         prob = torch.sigmoid(logit).numpy().ravel()
+        if args.veto_synonly:
+            for j, f in enumerate(flows):
+                if (f["synonly"] > 0 and f["synack"] == 0
+                        and not f["payload_seen"]):
+                    prob[j] = 0.0
         fp05 = int((prob >= 0.5).sum())
         fp90 = int((prob >= 0.90).sum())
         print(f"{os.path.basename(p)}: flows={len(prob)} "
