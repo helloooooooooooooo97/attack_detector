@@ -264,8 +264,8 @@ def extract_flows(path):
                 c["synonly"] += 1
             if flags & 0x04:
                 c["rst"] += 1
-            if payload:
-                c["payload_seen"] = True
+        if payload:
+            c["payload_seen"] = True
         if (src, sport) == c["client"]:
             c["c"].append((ts, payload))
             c["c_meta"].append((ts, pkt_len, len(payload), flags, win, doff, ihl))
